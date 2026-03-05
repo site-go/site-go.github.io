@@ -28,7 +28,7 @@ body {
     background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
     background-attachment: fixed;
     min-height: 100vh;
-    padding: 20px 10px; /* Reduced padding for mobile breathing room */
+    padding: 20px 10px;
     display: flex;
     justify-content: center;
     color: var(--text-main);
@@ -37,11 +37,11 @@ body {
 .glass-card {
     background: var(--glass-bg) !important;
     border-radius: 24px;
-    padding: 25px; /* Reduced from 40px for mobile comfort */
-    width: 95%; /* Ensures small margin on mobile */
-    max-width: 600px; /* Maintains desktop layout */
+    padding: 25px;
+    width: 95%;
+    max-width: 600px;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-    overflow: hidden; /* Prevents children from overflowing */
+    overflow: hidden;
 }
 
 /* HEADER & LOGO RESPONSIVENESS */
@@ -53,15 +53,15 @@ body {
 }
 
 .site-logo { 
-    width: 100%; /* Scales to container */
-    max-width: 220px; /* Limits desktop size */
-    height: auto; /* Maintains aspect ratio */
+    width: 100%;
+    max-width: 220px;
+    height: auto;
     margin-bottom: 15px; 
     object-fit: contain;
 }
 
 .header h2 { 
-    font-size: 1.1rem; /* Smaller for mobile headers */
+    font-size: 1.1rem;
     letter-spacing: 1px; 
     color: #1e293b; 
     text-transform: uppercase;
@@ -106,37 +106,65 @@ input[type="text"],
 input[type="email"], 
 input[type="tel"], 
 select {
-    width: 100%; /* Prevents horizontal overflow */
+    width: 100%;
     padding: 14px;
     border: 1px solid var(--border-color);
     border-radius: 10px;
-    font-size: 16px; /* Prevents iOS auto-zoom on mobile */
+    font-size: 16px;
     outline: none;
     transition: all 0.2s;
     background-color: #fff !important;
     color: #000 !important;
 }
 
-/* QR CODE RESPONSIVENESS */
+/* FIX: QR CONTAINER PERFECT ALIGNMENT */
+.qr-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin: 15px auto;
+    padding: 15px;
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px dashed var(--primary); /* The blue dotted border */
+    width: 100%;
+    max-width: 280px; /* Limits width on mobile */
+    box-sizing: border-box;
+}
+
+/* FIX: QR IMAGE SCALING */
 .qr-code-img {
-    max-width: 100%; /* Constraints image to screen */
+    width: 100%;
+    max-width: 220px; /* Keeps image away from dotted edges */
     height: auto;
     display: block;
     margin: 0 auto;
+    object-fit: contain;
+}
+
+/* Scan to Pay Label */
+.qr-container p {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 10px;
+    text-transform: uppercase;
 }
 
 /* PAYMENT SECTION */
 .payment-box { 
     background: #f8fafc !important; 
-    padding: 15px; /* Reduced for mobile consistency */
+    padding: 15px;
     border-radius: 16px; 
     border: 1px solid #e2e8f0;
-    width: 100%; /* Fits mobile width */
+    width: 100%;
 }
 
 /* FILE UPLOAD */
 input[type="file"] {
-    max-width: 100%; /* Prevents layout break on small screens */
+    max-width: 100%;
     font-size: 0.8rem;
 }
 
