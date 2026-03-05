@@ -31,6 +31,31 @@
         .section-note { font-size: 0.8rem; color: #64748b; margin-bottom: 15px; }
         .payment-box p { margin: 5px 0; font-size: 0.9rem; }
         .method-info { display: none; margin-top: 10px; padding: 12px; border-radius: 8px; font-size: 0.9rem; }
+        
+        /* QR Code Styling */
+        .qr-container {
+            text-align: center;
+            margin: 15px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 12px;
+            border: 1px dashed #6366f1;
+        }
+        .qr-code-img {
+            width: 200px;
+            height: 200px;
+            object-fit: contain;
+            border-radius: 4px;
+        }
+        .amount-badge {
+            display: inline-block;
+            background: #eef2ff;
+            color: #6366f1;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 700;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
@@ -55,30 +80,21 @@
             <div class="form-section">
                 <div class="section-title">SECTION 1: PERSONAL INFORMATION</div>
                 <p class="section-note">(For Certificate Printing – Strictly Follow Format)</p>
-                
                 <div class="input-group">
                     <label>Full Name</label>
                     <input type="text" name="fullname" placeholder="e.g. Juan Dela Cruz" required>
                 </div>
-
                 <div class="checkbox-group">
                     <label class="check-container">
                         <input type="checkbox" required>
                         <span class="checkmark"></span>
-                        <span class="label-text">I confirm the name entered above is correct for certificate printing.</span>
+                        <span class="label-text">I confirm the name entered above is correct.</span>
                     </label>
                 </div>
-
-                <div class="input-group">
-                    <label>Preferred Name (Optional)</label>
-                    <input type="text" name="preferred_name" placeholder="Nickname">
-                </div>
-
                 <div class="input-group">
                     <label>Email Address</label>
                     <input type="email" name="email" placeholder="email@example.com" required>
                 </div>
-
                 <div class="input-group">
                     <label>Mobile Number</label>
                     <input type="tel" name="mobile" placeholder="09XXXXXXXXX" required>
@@ -88,17 +104,17 @@
             <div class="form-section">
                 <div class="section-title">SECTION 2: INSTITUTION DETAILS</div>
                 <div class="input-group">
-                    <label>Institution / School / Company Name</label>
+                    <label>Institution Name</label>
                     <input type="text" name="institution" placeholder="Full Name of Institution" required>
                 </div>
                 <div class="input-group">
-                    <label>Position / Designation</label>
+                    <label>Position</label>
                     <select name="position" required>
                         <option value="" disabled selected>Select Position</option>
                         <option value="Student">Student</option>
                         <option value="Teacher">Teacher</option>
                         <option value="Industry Professional">Industry Professional</option>
-                        <option value="VIP Guest">VIP Guest</option>
+                        <option value="VIP">VIP</option>
                     </select>
                 </div>
             </div>
@@ -115,15 +131,15 @@
                 </div>
 
                 <div class="input-group" id="workshopWrapper" style="display: none;">
-                    <label>Step 2: Select Workshop & Venue</label>
+                    <label>Step 2: Select Workshop (Price will update below)</label>
                     <select name="workshop" id="workshopSelect" required>
                         <option value="" disabled selected>Tap to select...</option>
-                        <option value="Drone Workshop" class="mar14">Morning: Drone Workshop</option>
-                        <option value="Arduino Q" class="mar14">Morning: Arduino Q</option>
-                        <option value="Bambu Workshop" class="mar14">Afternoon: Bambu Workshop</option>
-                        <option value="VR Workshop" class="mar14">Afternoon: VR Workshop</option>
-                        <option value="Arduino Beginner" class="mar15">Morning: Arduino Beginner</option>
-                        <option value="Arduino Advance" class="mar15">Afternoon: Arduino Advance</option>
+                        <option value="Drone Workshop" class="mar14" data-price="1500">Morning: Drone Workshop (₱1,500)</option>
+                        <option value="Arduino Q" class="mar14" data-price="1200">Morning: Arduino Q (₱1,200)</option>
+                        <option value="Bambu Workshop" class="mar14" data-price="2000">Afternoon: Bambu Workshop (₱2,000)</option>
+                        <option value="VR Workshop" class="mar14" data-price="1800">Afternoon: VR Workshop (₱1,800)</option>
+                        <option value="Arduino Beginner" class="mar15" data-price="1000">Morning: Arduino Beginner (₱1,000)</option>
+                        <option value="Arduino Advance" class="mar15" data-price="1300">Afternoon: Arduino Advance (₱1,300)</option>
                     </select>
                 </div>
             </div>
@@ -135,13 +151,19 @@
                     <label>Select Payment Method</label>
                     <select name="payment_mode" id="paymentMethod" required>
                         <option value="" disabled selected>Choose Payment Method...</option>
-                        <option value="Bank Transfer">Bank Transfer</option>
-                        <option value="GCash">GCash</option>
+                        <option value="Bank Transfer">Bank Transfer (Metrobank)</option>
+                        <option value="GCash">GCash (Scan QR)</option>
                         <option value="Cash">Cash (On-site)</option>
                     </select>
                 </div>
 
                 <div class="payment-box" id="paymentDetailsBox" style="display:none; background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 12px;">
+                    
+                    <div id="priceDisplay" style="margin-bottom: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">
+                        <p style="font-weight: 600; font-size: 0.8rem; color: #64748b;">TOTAL TO PAY:</p>
+                        <span id="totalAmount" class="amount-badge">₱750.00</span>
+                    </div>
+
                     <div id="bankInfo" class="method-info">
                         <p><strong>Bank:</strong> METROBANK</p>
                         <p><strong>Account Name:</strong> iTECHNOLOGENT INC.</p>
@@ -151,6 +173,11 @@
                     <div id="gcashInfo" class="method-info">
                         <p><strong>GCash Name:</strong> iTECHNOLOGENT INC.</p>
                         <p><strong>GCash Number:</strong> 0917 XXX XXXX</p>
+                        
+                        <div class="qr-container">
+                            <p style="font-size: 0.7rem; color: #6366f1; margin-bottom: 5px; font-weight: 700;">SCAN TO PAY</p>
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=0917XXXXXXX" alt="GCash QR Code" class="qr-code-img">
+                        </div>
                     </div>
 
                     <div id="cashInfo" class="method-info">
@@ -159,10 +186,9 @@
 
                     <div id="onlinePaymentFields" style="display:none; margin-top: 15px;">
                         <div class="input-group">
-                            <label id="refLabel">Reference Number</label>
+                            <label>Reference Number</label>
                             <input type="text" name="bank_ref" id="refInput" placeholder="Enter Reference Number">
                         </div>
-
                         <div class="input-group">
                             <label>Upload Proof of Payment</label>
                             <input type="file" id="fileInput" accept="image/*">
@@ -191,10 +217,11 @@
         const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dbd7v3irn/image/upload';
         const CLOUDINARY_PRESET = 'REGISTRATION';
 
-        // Workshop Logic
+        // 1. WORKSHOP & PRICE LOGIC
         const dateSelect = document.getElementById('dateSelect');
         const workshopWrapper = document.getElementById('workshopWrapper');
         const workshopSelect = document.getElementById('workshopSelect');
+        const totalAmountText = document.getElementById('totalAmount');
         const allOptions = Array.from(workshopSelect.options);
 
         dateSelect.addEventListener('change', function() {
@@ -205,9 +232,18 @@
                     workshopSelect.appendChild(option.cloneNode(true));
                 }
             });
+            updatePrice();
         });
 
-        // Payment Logic
+        workshopSelect.addEventListener('change', updatePrice);
+
+        function updatePrice() {
+            const selectedOption = workshopSelect.options[workshopSelect.selectedIndex];
+            const price = selectedOption.getAttribute('data-price') || "0";
+            totalAmountText.innerText = `₱${Number(price).toLocaleString()}`;
+        }
+
+        // 2. PAYMENT LOGIC
         const paymentMethod = document.getElementById('paymentMethod');
         const paymentDetailsBox = document.getElementById('paymentDetailsBox');
         const bankInfo = document.getElementById('bankInfo');
@@ -224,7 +260,6 @@
             cashInfo.style.display = 'none';
             onlineFields.style.display = 'none';
             
-            // Reset required status
             refInput.required = false;
             fileInput.required = false;
 
@@ -243,7 +278,7 @@
             }
         });
 
-        // Submission Logic
+        // 3. SUBMISSION LOGIC
         const form = document.getElementById('regForm');
 
         form.addEventListener('submit', async (e) => {
@@ -253,7 +288,6 @@
             try {
                 let imageUrl = "No Screenshot / Cash Payment";
 
-                // Upload to Cloudinary only if file is required and present
                 if (fileInput.files.length > 0) {
                     const cloudData = new FormData();
                     cloudData.append('file', fileInput.files[0]);
@@ -261,7 +295,6 @@
 
                     const cloudRes = await fetch(CLOUDINARY_URL, { method: 'POST', body: cloudData });
                     const cloudJson = await cloudRes.json();
-                    
                     if (!cloudRes.ok) throw new Error(cloudJson.error.message);
                     imageUrl = cloudJson.secure_url;
                 }
@@ -269,6 +302,9 @@
                 const formData = new FormData(form);
                 const dataObj = {};
                 formData.forEach((value, key) => { dataObj[key] = value; });
+                
+                // Add price and screenshot
+                dataObj['total_price'] = totalAmountText.innerText;
                 dataObj['screenshot_url'] = imageUrl;
 
                 await fetch(scriptURL, { 
