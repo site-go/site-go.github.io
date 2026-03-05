@@ -30,6 +30,7 @@
         
         .section-note { font-size: 0.8rem; color: #64748b; margin-bottom: 15px; }
         .payment-box p { margin: 5px 0; font-size: 0.9rem; }
+        .method-info { display: none; margin-top: 10px; padding: 12px; border-radius: 8px; font-size: 0.9rem; }
     </style>
 </head>
 <body>
@@ -51,8 +52,6 @@
         </div>
 
         <form id="regForm">
-            <input type="hidden" name="payment_mode" value="Bank Transfer">
-
             <div class="form-section">
                 <div class="section-title">SECTION 1: PERSONAL INFORMATION</div>
                 <p class="section-note">(For Certificate Printing – Strictly Follow Format)</p>
@@ -83,16 +82,6 @@
                 <div class="input-group">
                     <label>Mobile Number</label>
                     <input type="tel" name="mobile" placeholder="09XXXXXXXXX" required>
-                </div>
-
-                <div class="input-group">
-                    <label>Gender (Optional)</label>
-                    <select name="gender">
-                        <option value="Not Specified">Select Gender</option>
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                        <option value="Prefer not to say">Prefer not to say</option>
-                    </select>
                 </div>
             </div>
 
@@ -141,19 +130,43 @@
 
             <div class="form-section">
                 <div class="section-title">SECTION 4: PAYMENT DETAILS</div>
-                <div class="payment-box" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 12px;">
-                    <p><strong>Bank:</strong> METROBANK</p>
-                    <p><strong>Account Name:</strong> iTECHNOLOGENT INC.</p>
-                    <p><strong>Account Number:</strong> 3 5133 5156 0470</p>
                 
-                    <div class="input-group" style="margin-top: 15px;">
-                        <label>Bank Reference Number</label>
-                        <input type="text" name="bank_ref" placeholder="Enter Reference Number" required>
+                <div class="input-group">
+                    <label>Select Payment Method</label>
+                    <select name="payment_mode" id="paymentMethod" required>
+                        <option value="" disabled selected>Choose Payment Method...</option>
+                        <option value="Bank Transfer">Bank Transfer</option>
+                        <option value="GCash">GCash</option>
+                        <option value="Cash">Cash (On-site)</option>
+                    </select>
+                </div>
+
+                <div class="payment-box" id="paymentDetailsBox" style="display:none; background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 12px;">
+                    <div id="bankInfo" class="method-info">
+                        <p><strong>Bank:</strong> METROBANK</p>
+                        <p><strong>Account Name:</strong> iTECHNOLOGENT INC.</p>
+                        <p><strong>Account Number:</strong> 3 5133 5156 0470</p>
                     </div>
 
-                    <div class="input-group">
-                        <label>Upload Proof of Payment</label>
-                        <input type="file" id="fileInput" accept="image/*" required>
+                    <div id="gcashInfo" class="method-info">
+                        <p><strong>GCash Name:</strong> iTECHNOLOGENT INC.</p>
+                        <p><strong>GCash Number:</strong> 0917 XXX XXXX</p>
+                    </div>
+
+                    <div id="cashInfo" class="method-info">
+                        <p style="color: #64748b;">Please proceed to the registration booth on the event day to settle your payment.</p>
+                    </div>
+
+                    <div id="onlinePaymentFields" style="display:none; margin-top: 15px;">
+                        <div class="input-group">
+                            <label id="refLabel">Reference Number</label>
+                            <input type="text" name="bank_ref" id="refInput" placeholder="Enter Reference Number">
+                        </div>
+
+                        <div class="input-group">
+                            <label>Upload Proof of Payment</label>
+                            <input type="file" id="fileInput" accept="image/*">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -174,12 +187,11 @@
     </div>
 
     <script>
-        // CONFIGURATION
         const scriptURL = 'https://script.google.com/macros/s/AKfycbwXVR46okMl5JFp4_Qqh6nF7P9YdDnahztyQ1yP2ZiPeUIlZ_gVNFK2pyDd6qhgAA/exec';
         const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dbd7v3irn/image/upload';
         const CLOUDINARY_PRESET = 'REGISTRATION';
 
-        // Dependent Dropdown Logic
+        // Workshop Logic
         const dateSelect = document.getElementById('dateSelect');
         const workshopWrapper = document.getElementById('workshopWrapper');
         const workshopSelect = document.getElementById('workshopSelect');
@@ -195,18 +207,53 @@
             });
         });
 
-        // Form Submission Logic
-        const form = document.getElementById('regForm');
+        // Payment Logic
+        const paymentMethod = document.getElementById('paymentMethod');
+        const paymentDetailsBox = document.getElementById('paymentDetailsBox');
+        const bankInfo = document.getElementById('bankInfo');
+        const gcashInfo = document.getElementById('gcashInfo');
+        const cashInfo = document.getElementById('cashInfo');
+        const onlineFields = document.getElementById('onlinePaymentFields');
+        const refInput = document.getElementById('refInput');
         const fileInput = document.getElementById('fileInput');
+
+        paymentMethod.addEventListener('change', function() {
+            paymentDetailsBox.style.display = 'block';
+            bankInfo.style.display = 'none';
+            gcashInfo.style.display = 'none';
+            cashInfo.style.display = 'none';
+            onlineFields.style.display = 'none';
+            
+            // Reset required status
+            refInput.required = false;
+            fileInput.required = false;
+
+            if (this.value === 'Bank Transfer') {
+                bankInfo.style.display = 'block';
+                onlineFields.style.display = 'block';
+                refInput.required = true;
+                fileInput.required = true;
+            } else if (this.value === 'GCash') {
+                gcashInfo.style.display = 'block';
+                onlineFields.style.display = 'block';
+                refInput.required = true;
+                fileInput.required = true;
+            } else if (this.value === 'Cash') {
+                cashInfo.style.display = 'block';
+            }
+        });
+
+        // Submission Logic
+        const form = document.getElementById('regForm');
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             document.getElementById('loadingOverlay').style.display = 'flex';
             
             try {
-                let imageUrl = "No Screenshot";
+                let imageUrl = "No Screenshot / Cash Payment";
 
-                // STEP 1: Upload to Cloudinary
+                // Upload to Cloudinary only if file is required and present
                 if (fileInput.files.length > 0) {
                     const cloudData = new FormData();
                     cloudData.append('file', fileInput.files[0]);
@@ -219,7 +266,6 @@
                     imageUrl = cloudJson.secure_url;
                 }
 
-                // STEP 2: Send to Google Sheets
                 const formData = new FormData(form);
                 const dataObj = {};
                 formData.forEach((value, key) => { dataObj[key] = value; });
@@ -232,7 +278,6 @@
                     body: new URLSearchParams(dataObj)
                 });
 
-                // SUCCESS UI
                 document.getElementById('statusTitle').innerText = "Registration Successful!";
                 document.getElementById('statusTitle').style.color = "#10b981";
                 document.getElementById('statusMsg').innerText = "Record and proof successfully synced.";
@@ -242,7 +287,7 @@
             } catch (err) {
                 console.error(err);
                 document.getElementById('statusTitle').innerText = "Sync Failed";
-                document.getElementById('statusMsg').innerText = err.message || "Check connection or Cloudinary settings.";
+                document.getElementById('statusMsg').innerText = err.message || "Check connection.";
                 document.querySelector('.spinner').style.display = 'none';
                 document.getElementById('closeBtn').style.display = 'block';
                 document.getElementById('closeBtn').innerText = "Try Again";
