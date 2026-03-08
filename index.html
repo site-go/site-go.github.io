@@ -134,12 +134,12 @@
                     <label>Step 2: Select Workshop (Price will update below)</label>
                     <select name="workshop" id="workshopSelect" required>
                         <option value="" disabled selected>Tap to select...</option>
-                        <option value="Drone Workshop" class="mar14" data-price="1500">Morning: Drone Workshop (₱750)</option>
-                        <option value="Arduino Q" class="mar14" data-price="1200">Morning: Arduino Q (₱750)</option>
-                        <option value="Bambu Workshop" class="mar14" data-price="2000">Afternoon: Bambu Workshop (₱750)</option>
-                        <option value="VR Workshop" class="mar14" data-price="1800">Afternoon: VR Workshop (₱750)</option>
-                        <option value="Arduino Beginner" class="mar15" data-price="1000">Morning: Arduino Beginner (₱750)</option>
-                        <option value="Arduino Advance" class="mar15" data-price="1300">Afternoon: Arduino Advance (₱750)</option>
+                        <option value="Drone Workshop" class="mar14" data-price="750">Morning: Drone Workshop (₱750)</option>
+                        <option value="Arduino Q" class="mar14" data-price="750">Morning: Arduino Q (₱750)</option>
+                        <option value="Bambu Workshop" class="mar14" data-price="750">Afternoon: Bambu Workshop (₱750)</option>
+                        <option value="VR Workshop" class="mar14" data-price="750">Afternoon: VR Workshop (₱750)</option>
+                        <option value="Arduino Beginner" class="mar15" data-price="750">Morning: Arduino Beginner (₱750)</option>
+                        <option value="Arduino Advance" class="mar15" data-price="750">Afternoon: Arduino Advance (₱750)</option>
                     </select>
                 </div>
             </div>
@@ -172,8 +172,6 @@
 
                     <div id="gcashInfo" class="method-info">
                         <p><strong>GCash Name:</strong> iTECHNOLOGENT INC.</p>
-                        
-                        
                         <div class="qr-container">
                             <p style="font-size: 0.7rem; color: #6366f1; margin-bottom: 5px; font-weight: 700;">SCAN TO PAY</p>
                             <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=0917XXXXXXX" alt="GCash QR Code" class="qr-code-img">
@@ -238,11 +236,11 @@
         workshopSelect.addEventListener('change', updatePrice);
 
         function updatePrice() {
-    const selectedOption = workshopSelect.options[workshopSelect.selectedIndex];
-    // This line looks for "data-price", not the text inside the parentheses
-    const price = selectedOption.getAttribute('data-price') || "0"; 
-    totalAmountText.innerText = `₱${Number(price).toLocaleString()}`;
-}
+            const selectedOption = workshopSelect.options[workshopSelect.selectedIndex];
+            // Fix: Pulls numeric value from data-price attribute
+            const price = selectedOption.getAttribute('data-price') || "750"; 
+            totalAmountText.innerText = `₱${Number(price).toLocaleString()}`;
+        }
 
         // 2. PAYMENT LOGIC
         const paymentMethod = document.getElementById('paymentMethod');
@@ -333,6 +331,3 @@
     </script>
 </body>
 </html>
-
-
-
