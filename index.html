@@ -238,10 +238,11 @@
         workshopSelect.addEventListener('change', updatePrice);
 
         function updatePrice() {
-            const selectedOption = workshopSelect.options[workshopSelect.selectedIndex];
-            const price = selectedOption.getAttribute('data-price') || "0";
-            totalAmountText.innerText = `₱${Number(price).toLocaleString()}`;
-        }
+    const selectedOption = workshopSelect.options[workshopSelect.selectedIndex];
+    // This line looks for "data-price", not the text inside the parentheses
+    const price = selectedOption.getAttribute('data-price') || "0"; 
+    totalAmountText.innerText = `₱${Number(price).toLocaleString()}`;
+}
 
         // 2. PAYMENT LOGIC
         const paymentMethod = document.getElementById('paymentMethod');
@@ -332,5 +333,6 @@
     </script>
 </body>
 </html>
+
 
 
