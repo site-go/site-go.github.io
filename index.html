@@ -32,7 +32,6 @@
         .payment-box p { margin: 5px 0; font-size: 0.9rem; }
         .method-info { display: none; margin-top: 10px; padding: 12px; border-radius: 8px; font-size: 0.9rem; }
         
-        /* QR Code Styling */
         .qr-container {
             text-align: center;
             margin: 15px 0;
@@ -57,10 +56,39 @@
             margin-top: 5px;
         }
 
-        /* NEW: Styling for closed workshops */
         option:disabled {
             color: #94a3b8;
             background-color: #f8fafc;
+        }
+
+        #deadlineNotice {
+            display: none;
+            background: #fee2e2;
+            color: #b91c1c;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-weight: 700;
+            text-align: center;
+            border: 2px solid #ef4444;
+        }
+
+        .check-container {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-size: 0.85rem;
+            margin-top: 10px;
+            color: #475569;
+        }
+        .checkmark {
+            height: 18px;
+            width: 18px;
+            background-color: #f1f5f9;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 4px;
+            margin-right: 10px;
+            display: inline-block;
         }
     </style>
 </head>
@@ -68,12 +96,17 @@
 
     <div id="loadingOverlay">
         <div class="spinner"></div>
-        <h2 id="statusTitle" style="margin-top: 20px; font-weight: 800;">Processing Registration...</h2>
-        <p id="statusMsg">Uploading payment proof and syncing record. Please wait.</p>
-        <button id="closeBtn" onclick="location.reload()" class="btn" style="display:none; width:auto; padding: 10px 40px; margin-top:20px; background:#6366f1; color:white; border:none; border-radius:8px; cursor:pointer;">Register Another</button>
+        <h2 id="statusTitle" style="margin-top: 20px; font-weight: 800;">Processing...</h2>
+        <p id="statusMsg">Please wait.</p>
+        <button id="closeBtn" onclick="location.reload()" class="btn" style="display:none; width:auto; padding: 10px 40px; margin-top:20px; background:#6366f1; color:white; border:none; border-radius:8px;">Back</button>
     </div>
 
     <div class="glass-card">
+        <div id="deadlineNotice">
+            REGISTRATION CLOSED<br>
+            The registration deadline for this event (March 14, 2026) has passed.
+        </div>
+
         <div class="header">
             <div class="logo-container">
                 <img src="ITECH LOGO.png" alt="ITECH Logo" class="site-logo">
@@ -85,11 +118,11 @@
         <form id="regForm">
             <div class="form-section">
                 <div class="section-title">SECTION 1: PERSONAL INFORMATION</div>
-                <p class="section-note">(For Certificate Printing – Strictly Follow Format)</p>
                 <div class="input-group">
                     <label>Full Name</label>
                     <input type="text" name="fullname" placeholder="e.g. Juan Dela Cruz" required>
                 </div>
+
                 <div class="checkbox-group">
                     <label class="check-container">
                         <input type="checkbox" required>
@@ -97,9 +130,10 @@
                         <span class="label-text">I confirm the name entered above is correct.</span>
                     </label>
                 </div>
+
                 <div class="input-group">
                     <label>Email Address</label>
-                    <input type="email" name="email" placeholder="email@example.com" required>
+                    <input type="email" name="email" required>
                 </div>
                 <div class="input-group">
                     <label>Mobile Number</label>
@@ -111,7 +145,7 @@
                 <div class="section-title">SECTION 2: INSTITUTION DETAILS</div>
                 <div class="input-group">
                     <label>Institution Name</label>
-                    <input type="text" name="institution" placeholder="Full Name of Institution" required>
+                    <input type="text" name="institution" required>
                 </div>
                 <div class="input-group">
                     <label>Position</label>
@@ -137,13 +171,13 @@
                 </div>
 
                 <div class="input-group" id="workshopWrapper" style="display: none;">
-                    <label>Step 2: Select Workshop (Price will update below)</label>
+                    <label>Step 2: Select Workshop</label>
                     <select name="workshop" id="workshopSelect" required>
                         <option value="" disabled selected>Tap to select...</option>
                         <option value="Drone Workshop" class="mar14" data-price="750" disabled>Morning: Drone Education Workshop (CLOSED)</option>
                         <option value="Arduino Q" class="mar14" data-price="750">Morning: Arduino Q Workshop (₱750)</option>
-                        <option value="Bambu Workshop" class="mar14" data-price="750">Afternoon: 3D Printing Innovation Workshop (₱750)</option>
                         <option value="VR Workshop" class="mar14" data-price="750">Afternoon: VR Workshop (₱750)</option>
+                        <option value="Bambu Workshop" class="mar14" data-price="750">Afternoon: 3D Printing Innovation Workshop (₱750)</option>
                         <option value="Arduino Beginner" class="mar15" data-price="750">Morning: Arduino Beginner Workshop (₱750)</option>
                         <option value="Arduino Advance" class="mar15" data-price="750">Afternoon: Arduino Advanced Workshop (₱750)</option>
                     </select>
@@ -152,7 +186,6 @@
 
             <div class="form-section">
                 <div class="section-title">SECTION 4: PAYMENT DETAILS</div>
-                
                 <div class="input-group">
                     <label>Select Payment Method</label>
                     <select name="payment_mode" id="paymentMethod" required>
@@ -164,7 +197,6 @@
                 </div>
 
                 <div class="payment-box" id="paymentDetailsBox" style="display:none; background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 12px;">
-                    
                     <div id="priceDisplay" style="margin-bottom: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">
                         <p style="font-weight: 600; font-size: 0.8rem; color: #64748b;">TOTAL TO PAY:</p>
                         <span id="totalAmount" class="amount-badge">₱750.00</span>
@@ -180,19 +212,18 @@
                         <p><strong>GCash Name:</strong> NU*****M U.</p>
                         <p><strong>GCash Number:</strong> 09094951866</p>
                         <div class="qr-container">
-                            <p style="font-size: 0.7rem; color: #6366f1; margin-bottom: 5px; font-weight: 700;">SCAN TO PAY</p>
                             <img src="qrcode.png" alt="GCash QR Code" class="qr-code-img">
                         </div>
                     </div>
 
                     <div id="cashInfo" class="method-info">
-                        <p style="color: #64748b;">Please proceed to the registration booth on the event day to settle your payment.</p>
+                        <p style="color: #64748b;">Please pay at the registration booth on the event day.</p>
                     </div>
 
                     <div id="onlinePaymentFields" style="display:none; margin-top: 15px;">
                         <div class="input-group">
                             <label>Reference Number</label>
-                            <input type="text" name="bank_ref" id="refInput" placeholder="Enter Reference Number">
+                            <input type="text" name="bank_ref" id="refInput">
                         </div>
                         <div class="input-group">
                             <label>Upload Proof of Payment</label>
@@ -208,7 +239,7 @@
                     <label class="check-container">
                         <input type="checkbox" required>
                         <span class="checkmark"></span>
-                        <span class="label-text">I agree to the Privacy Policy and Rules.</span>
+                        <span class="label-text">I agree to the Privacy Policy.</span>
                     </label>
                 </div>
             </div>
@@ -218,9 +249,17 @@
     </div>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbwXVR46okMl5JFp4_Qqh6nF7P9YdDnahztyQ1yP2ZiPeUIlZ_gVNFK2pyDd6qhgAA/exec';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzobZzIXKodSfP9WhjesB1wV6EYowAfiPEqoxZZZZOtRFPumFuKBAN6zJXvCOxTBPg/exec';
         const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dbd7v3irn/image/upload';
         const CLOUDINARY_PRESET = 'REGISTRATION';
+
+        const SLOT_LIMITS = {
+            "Arduino Q": 48,
+            "VR Workshop": 48,
+            "Bambu Workshop": 60,
+            "Arduino Beginner": 60,
+            "Arduino Advance": 60
+        };
 
         const dateSelect = document.getElementById('dateSelect');
         const workshopWrapper = document.getElementById('workshopWrapper');
@@ -228,9 +267,52 @@
         const totalAmountText = document.getElementById('totalAmount');
         const allOptions = Array.from(workshopSelect.options);
 
-        dateSelect.addEventListener('change', function() {
+        // Fetch Counts logic with Cache Busting
+        async function updateAvailableSlots() {
+            try {
+                // Add timestamp to URL to prevent browser caching
+                const response = await fetch(`${scriptURL}?action=getCounts&t=${new Date().getTime()}`);
+                const counts = await response.json(); 
+                
+                allOptions.forEach(opt => {
+                    const workshop = opt.value;
+                    if (SLOT_LIMITS[workshop]) {
+                        const registered = counts[workshop] || 0;
+                        const remaining = SLOT_LIMITS[workshop] - registered;
+
+                        if (remaining <= 0) {
+                            opt.disabled = true;
+                            opt.text = `${opt.text.split('(')[0].split('₱')[0].trim()} (FULL)`;
+                        } else {
+                            const baseText = opt.text.split('(')[0].trim();
+                            const priceText = opt.getAttribute('data-price') ? `₱${opt.getAttribute('data-price')}` : '₱750';
+                            opt.text = `${baseText} (${priceText} - ${remaining} slots left)`;
+                        }
+                    }
+                });
+            } catch (e) { 
+                console.warn("Real-time slot sync failed. Using last known data."); 
+            }
+        }
+
+        window.addEventListener('load', async () => {
+            const today = new Date();
+            const deadline = new Date('2026-03-14');
+            if (today >= deadline) {
+                document.getElementById('regForm').style.display = 'none';
+                document.getElementById('deadlineNotice').style.display = 'block';
+                return;
+            }
+            await updateAvailableSlots();
+        });
+
+        dateSelect.addEventListener('change', async function() {
             workshopWrapper.style.display = 'block';
             workshopSelect.innerHTML = '<option value="" disabled selected>Tap to select...</option>';
+            
+            // Re-sync before showing options for this date
+            await updateAvailableSlots();
+
             allOptions.forEach(option => {
                 if (option.classList.contains(this.value)) {
                     workshopSelect.appendChild(option.cloneNode(true));
@@ -250,85 +332,56 @@
 
         const paymentMethod = document.getElementById('paymentMethod');
         const paymentDetailsBox = document.getElementById('paymentDetailsBox');
-        const bankInfo = document.getElementById('bankInfo');
-        const gcashInfo = document.getElementById('gcashInfo');
-        const cashInfo = document.getElementById('cashInfo');
         const onlineFields = document.getElementById('onlinePaymentFields');
         const refInput = document.getElementById('refInput');
         const fileInput = document.getElementById('fileInput');
 
         paymentMethod.addEventListener('change', function() {
             paymentDetailsBox.style.display = 'block';
-            bankInfo.style.display = 'none';
-            gcashInfo.style.display = 'none';
-            cashInfo.style.display = 'none';
-            onlineFields.style.display = 'none';
+            document.getElementById('bankInfo').style.display = this.value === 'Bank Transfer' ? 'block' : 'none';
+            document.getElementById('gcashInfo').style.display = this.value === 'GCash' ? 'block' : 'none';
+            document.getElementById('cashInfo').style.display = this.value === 'Cash' ? 'block' : 'none';
             
-            refInput.required = false;
-            fileInput.required = false;
-
-            if (this.value === 'Bank Transfer') {
-                bankInfo.style.display = 'block';
-                onlineFields.style.display = 'block';
-                refInput.required = true;
-                fileInput.required = true;
-            } else if (this.value === 'GCash') {
-                gcashInfo.style.display = 'block';
-                onlineFields.style.display = 'block';
-                refInput.required = true;
-                fileInput.required = true;
-            } else if (this.value === 'Cash') {
-                cashInfo.style.display = 'block';
-            }
+            const isOnline = this.value === 'Bank Transfer' || this.value === 'GCash';
+            onlineFields.style.display = isOnline ? 'block' : 'none';
+            refInput.required = isOnline;
+            fileInput.required = isOnline;
         });
 
         const form = document.getElementById('regForm');
-
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             document.getElementById('loadingOverlay').style.display = 'flex';
             
             try {
-                let imageUrl = "No Screenshot / Cash Payment";
-
+                let imageUrl = "Cash Payment";
                 if (fileInput.files.length > 0) {
                     const cloudData = new FormData();
                     cloudData.append('file', fileInput.files[0]);
                     cloudData.append('upload_preset', CLOUDINARY_PRESET);
-
                     const cloudRes = await fetch(CLOUDINARY_URL, { method: 'POST', body: cloudData });
                     const cloudJson = await cloudRes.json();
-                    if (!cloudRes.ok) throw new Error(cloudJson.error.message);
                     imageUrl = cloudJson.secure_url;
                 }
 
                 const formData = new FormData(form);
                 const dataObj = {};
                 formData.forEach((value, key) => { dataObj[key] = value; });
-                
                 dataObj['total_price'] = totalAmountText.innerText;
                 dataObj['screenshot_url'] = imageUrl;
 
                 await fetch(scriptURL, { 
                     method: 'POST', 
                     mode: 'no-cors', 
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: new URLSearchParams(dataObj)
                 });
 
-                document.getElementById('statusTitle').innerText = "Registration Successful!";
-                document.getElementById('statusTitle').style.color = "#10b981";
-                document.getElementById('statusMsg').innerText = "Record and proof successfully synced.";
-                document.querySelector('.spinner').style.display = 'none';
+                document.getElementById('statusTitle').innerText = "Success!";
+                document.getElementById('statusMsg').innerText = "Registration complete.";
                 document.getElementById('closeBtn').style.display = 'block';
-
             } catch (err) {
-                console.error(err);
-                document.getElementById('statusTitle').innerText = "Sync Failed";
-                document.getElementById('statusMsg').innerText = err.message || "Check connection.";
-                document.querySelector('.spinner').style.display = 'none';
+                document.getElementById('statusTitle').innerText = "Error";
                 document.getElementById('closeBtn').style.display = 'block';
-                document.getElementById('closeBtn').innerText = "Try Again";
             }
         });
     </script>
