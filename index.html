@@ -56,6 +56,12 @@
             font-weight: 700;
             margin-top: 5px;
         }
+
+        /* NEW: Styling for closed workshops */
+        option:disabled {
+            color: #94a3b8;
+            background-color: #f8fafc;
+        }
     </style>
 </head>
 <body>
@@ -134,12 +140,12 @@
                     <label>Step 2: Select Workshop (Price will update below)</label>
                     <select name="workshop" id="workshopSelect" required>
                         <option value="" disabled selected>Tap to select...</option>
-                        <option value="Drone Workshop" class="mar14" data-price="750">Morning: Drone Education Workshop (₱750)</option>
+                        <option value="Drone Workshop" class="mar14" data-price="750" disabled>Morning: Drone Education Workshop (CLOSED)</option>
                         <option value="Arduino Q" class="mar14" data-price="750">Morning: Arduino Q Workshop (₱750)</option>
                         <option value="Bambu Workshop" class="mar14" data-price="750">Afternoon: 3D Printing Innovation Workshop (₱750)</option>
                         <option value="VR Workshop" class="mar14" data-price="750">Afternoon: VR Workshop (₱750)</option>
-                        <option value="Arduino Beginner" class="mar15" data-price="750">Morning: Arduino R4 Beginner Workshop (₱750)</option>
-                        <option value="Arduino Advance" class="mar15" data-price="750">Afternoon: Arduino R4 Advanced Workshop (₱750)</option>
+                        <option value="Arduino Beginner" class="mar15" data-price="750">Morning: Arduino Beginner Workshop (₱750)</option>
+                        <option value="Arduino Advance" class="mar15" data-price="750">Afternoon: Arduino Advanced Workshop (₱750)</option>
                     </select>
                 </div>
             </div>
@@ -216,7 +222,6 @@
         const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dbd7v3irn/image/upload';
         const CLOUDINARY_PRESET = 'REGISTRATION';
 
-        // 1. WORKSHOP & PRICE LOGIC
         const dateSelect = document.getElementById('dateSelect');
         const workshopWrapper = document.getElementById('workshopWrapper');
         const workshopSelect = document.getElementById('workshopSelect');
@@ -238,12 +243,11 @@
 
         function updatePrice() {
             const selectedOption = workshopSelect.options[workshopSelect.selectedIndex];
-            // Fix: Pulls numeric value from data-price attribute
+            if(!selectedOption) return;
             const price = selectedOption.getAttribute('data-price') || "750"; 
             totalAmountText.innerText = `₱${Number(price).toLocaleString()}`;
         }
 
-        // 2. PAYMENT LOGIC
         const paymentMethod = document.getElementById('paymentMethod');
         const paymentDetailsBox = document.getElementById('paymentDetailsBox');
         const bankInfo = document.getElementById('bankInfo');
@@ -278,7 +282,6 @@
             }
         });
 
-        // 3. SUBMISSION LOGIC
         const form = document.getElementById('regForm');
 
         form.addEventListener('submit', async (e) => {
@@ -303,7 +306,6 @@
                 const dataObj = {};
                 formData.forEach((value, key) => { dataObj[key] = value; });
                 
-                // Add price and screenshot
                 dataObj['total_price'] = totalAmountText.innerText;
                 dataObj['screenshot_url'] = imageUrl;
 
@@ -332,6 +334,3 @@
     </script>
 </body>
 </html>
-
-
-
