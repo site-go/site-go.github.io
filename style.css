@@ -38,13 +38,27 @@ body {
     background: var(--glass-bg) !important;
     border-radius: 24px;
     padding: 25px;
-    width: 95%;
+    width: 100%;
     max-width: 600px;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     overflow: hidden;
 }
 
-/* HEADER & LOGO RESPONSIVENESS */
+/* DEADLINE NOTICE */
+#deadlineNotice {
+    background: #fee2e2;
+    color: #b91c1c;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    font-weight: 700;
+    text-align: center;
+    border: 2px solid #ef4444;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+/* HEADER & LOGO */
 .header { 
     text-align: center; 
     margin-bottom: 30px; 
@@ -65,6 +79,7 @@ body {
     letter-spacing: 1px; 
     color: #1e293b; 
     text-transform: uppercase;
+    line-height: 1.3;
 }
 
 /* SECTIONS */
@@ -77,22 +92,10 @@ body {
     margin-bottom: 15px;
     border-left: 4px solid var(--primary);
     padding-left: 10px;
+    text-transform: uppercase;
 }
 
-/* CASCADING WORKSHOP WRAPPER */
-#workshopWrapper {
-    animation: slideDown 0.4s ease-out;
-    padding-top: 15px;
-    margin-top: 15px;
-    border-top: 1px dashed var(--border-color);
-}
-
-@keyframes slideDown {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* INPUTS & MOBILE SELECT */
+/* INPUTS & SELECTS */
 .input-group { margin-bottom: 18px; }
 .input-group label { 
     display: block; 
@@ -110,14 +113,88 @@ select {
     padding: 14px;
     border: 1px solid var(--border-color);
     border-radius: 10px;
-    font-size: 16px;
+    font-size: 16px; /* Prevents iOS zoom */
     outline: none;
     transition: all 0.2s;
     background-color: #fff !important;
     color: #000 !important;
 }
 
-/* FIX: QR CONTAINER PERFECT ALIGNMENT */
+input:focus, select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+/* WORKSHOP SELECT SPECIFIC */
+option:disabled {
+    color: #94a3b8;
+    background-color: #f8fafc;
+    font-style: italic;
+}
+
+/* CHECKBOX CUSTOM STYLING (The Fix) */
+.checkbox-group {
+    margin: 10px 0 20px 0;
+}
+
+.check-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: #475569;
+    user-select: none;
+}
+
+.check-container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.checkmark {
+    height: 20px;
+    width: 20px;
+    background-color: #f1f5f9;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 6px;
+    margin-right: 12px;
+    display: inline-block;
+    position: relative;
+    flex-shrink: 0;
+    transition: all 0.2s;
+}
+
+.check-container:hover input ~ .checkmark {
+    background-color: #e2e8f0;
+}
+
+.check-container input:checked ~ .checkmark {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+    left: 6px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2.5px 2.5px 0;
+    transform: rotate(45deg);
+}
+
+.check-container input:checked ~ .checkmark:after {
+    display: block;
+}
+
+/* QR CONTAINER */
 .qr-container {
     display: flex;
     flex-direction: column;
@@ -128,56 +205,38 @@ select {
     padding: 15px;
     background: #ffffff;
     border-radius: 12px;
-    border: 1px dashed var(--primary); /* The blue dotted border */
+    border: 1px dashed var(--primary);
     width: 100%;
-    max-width: 280px; /* Limits width on mobile */
-    box-sizing: border-box;
+    max-width: 280px;
 }
 
-/* FIX: QR IMAGE SCALING */
 .qr-code-img {
     width: 100%;
-    max-width: 220px; /* Keeps image away from dotted edges */
+    max-width: 200px;
     height: auto;
     display: block;
     margin: 0 auto;
     object-fit: contain;
 }
 
-/* Scan to Pay Label */
-.qr-container p {
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: var(--primary);
-    margin-bottom: 10px;
-    text-transform: uppercase;
-}
-
-/* PAYMENT SECTION */
+/* PAYMENT BOX */
 .payment-box { 
     background: #f8fafc !important; 
-    padding: 15px;
+    padding: 20px;
     border-radius: 16px; 
     border: 1px solid #e2e8f0;
-    width: 100%;
 }
 
-/* FILE UPLOAD */
-input[type="file"] {
-    max-width: 100%;
-    font-size: 0.8rem;
-}
-
-/* CHECKBOXES */
-.check-container {
-    display: flex;
-    align-items: flex-start;
-    position: relative;
-    padding-left: 32px;
-    margin-bottom: 15px;
-    cursor: pointer;
-    font-size: 0.85rem;
-    color: #475569;
+.amount-badge {
+    display: inline-block;
+    background: #eef2ff;
+    color: var(--primary);
+    padding: 6px 16px;
+    border-radius: 50px;
+    font-weight: 800;
+    font-size: 1rem;
+    margin-top: 5px;
+    border: 1px solid rgba(99, 102, 241, 0.2);
 }
 
 /* BUTTON */
@@ -193,15 +252,28 @@ input[type="file"] {
     font-size: 1rem;
     transition: all 0.3s ease;
     box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2);
+    margin-top: 10px;
+}
+
+.btn:hover {
+    background: var(--primary-hover) !important;
+    transform: translateY(-2px);
+}
+
+.btn:active {
+    transform: translateY(0);
 }
 
 /* MOBILE MEDIA QUERY */
 @media (max-width: 480px) {
     .glass-card {
-        padding: 20px 15px;
-        border-radius: 16px;
+        padding: 25px 15px;
+        border-radius: 0; /* Full width mobile feel */
     }
     .header h2 {
         font-size: 0.95rem;
+    }
+    input[type="text"], select {
+        font-size: 16px; /* Essential for mobile UX */
     }
 }
