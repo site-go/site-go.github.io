@@ -73,6 +73,7 @@
             border: 2px solid #ef4444;
         }
 
+        /* Checkbox styling */
         .check-container {
             display: flex;
             align-items: center;
@@ -174,7 +175,7 @@
                     <label>Step 2: Select Workshop</label>
                     <select name="workshop" id="workshopSelect" required>
                         <option value="" disabled selected>Tap to select...</option>
-                        <option value="Drone Workshop" class="mar14" data-price="750" disabled>Morning: Drone Education Workshop (CLOSED)</option>
+                        <option value="Drone Workshop" class="mar14" data-price="750">Morning: Drone Education Workshop (₱750)</option>
                         <option value="Arduino Q" class="mar14" data-price="750">Morning: Arduino Q Workshop (₱750)</option>
                         <option value="VR Workshop" class="mar14" data-price="750">Afternoon: VR Workshop (₱750)</option>
                         <option value="Bambu Workshop" class="mar14" data-price="750">Afternoon: 3D Printing Innovation Workshop (₱750)</option>
@@ -254,6 +255,7 @@
         const CLOUDINARY_PRESET = 'REGISTRATION';
 
         const SLOT_LIMITS = {
+            "Drone Workshop": 48, // ADDED DRONE WORKSHOP LIMIT
             "Arduino Q": 48,
             "VR Workshop": 48,
             "Bambu Workshop": 60,
@@ -267,10 +269,8 @@
         const totalAmountText = document.getElementById('totalAmount');
         const allOptions = Array.from(workshopSelect.options);
 
-        // Fetch Counts logic with Cache Busting
         async function updateAvailableSlots() {
             try {
-                // Add timestamp to URL to prevent browser caching
                 const response = await fetch(`${scriptURL}?action=getCounts&t=${new Date().getTime()}`);
                 const counts = await response.json(); 
                 
@@ -291,7 +291,7 @@
                     }
                 });
             } catch (e) { 
-                console.warn("Real-time slot sync failed. Using last known data."); 
+                console.warn("Real-time slot sync failed."); 
             }
         }
 
@@ -310,7 +310,6 @@
             workshopWrapper.style.display = 'block';
             workshopSelect.innerHTML = '<option value="" disabled selected>Tap to select...</option>';
             
-            // Re-sync before showing options for this date
             await updateAvailableSlots();
 
             allOptions.forEach(option => {
