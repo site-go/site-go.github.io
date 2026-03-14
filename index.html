@@ -73,7 +73,6 @@
             border: 2px solid #ef4444;
         }
 
-        /* Checkbox styling */
         .check-container {
             display: flex;
             align-items: center;
@@ -175,8 +174,6 @@
                     <label>Step 2: Select Workshop</label>
                     <select name="workshop" id="workshopSelect" required>
                         <option value="" disabled selected>Tap to select...</option>
-                        <option value="Drone Workshop" class="mar14" data-price="750">Morning: Drone Education Workshop (₱750)</option>
-                        <option value="Arduino Q" class="mar14" data-price="750">Morning: Arduino Q Workshop (₱750)</option>
                         <option value="VR Workshop" class="mar14" data-price="750">Afternoon: VR Workshop (₱750)</option>
                         <option value="Bambu Workshop" class="mar14" data-price="750">Afternoon: 3D Printing Innovation Workshop (₱750)</option>
                         <option value="Arduino Beginner" class="mar15" data-price="750">Morning: Arduino Beginner Workshop (₱750)</option>
@@ -255,8 +252,6 @@
         const CLOUDINARY_PRESET = 'REGISTRATION';
 
         const SLOT_LIMITS = {
-            "Drone Workshop": 48, // ADDED DRONE WORKSHOP LIMIT
-            "Arduino Q": 48,
             "VR Workshop": 48,
             "Bambu Workshop": 60,
             "Arduino Beginner": 60,
@@ -282,7 +277,7 @@
 
                         if (remaining <= 0) {
                             opt.disabled = true;
-                            opt.text = `${opt.text.split('(')[0].split('₱')[0].trim()} (FULL)`;
+                            opt.text = `${opt.text.split('(')[0].trim()} (FULL)`;
                         } else {
                             const baseText = opt.text.split('(')[0].trim();
                             const priceText = opt.getAttribute('data-price') ? `₱${opt.getAttribute('data-price')}` : '₱750';
@@ -297,7 +292,7 @@
 
         window.addEventListener('load', async () => {
             const today = new Date();
-            const deadline = new Date('2026-03-14');
+            const deadline = new Date('2026-03-15'); // Full closure end of event
             if (today >= deadline) {
                 document.getElementById('regForm').style.display = 'none';
                 document.getElementById('deadlineNotice').style.display = 'block';
@@ -312,8 +307,17 @@
             
             await updateAvailableSlots();
 
+            const currentTime = new Date();
+            const cutoffTime = new Date('2026-03-14T12:00:00'); // 12 PM Today
+
             allOptions.forEach(option => {
                 if (option.classList.contains(this.value)) {
+                    // Specific logic for March 14 Afternoon Workshops
+                    if (this.value === "mar14" && (option.value === "VR Workshop" || option.value === "Bambu Workshop")) {
+                        if (currentTime >= cutoffTime) {
+                            return; // Skip adding these to the list if past 12pm
+                        }
+                    }
                     workshopSelect.appendChild(option.cloneNode(true));
                 }
             });
