@@ -104,7 +104,7 @@
     <div class="glass-card">
         <div id="deadlineNotice">
             REGISTRATION CLOSED<br>
-            The registration deadline for this event (March 14, 2026) has passed.
+            The registration deadline for this event (March 15, 2026) has passed.
         </div>
 
         <div class="header">
@@ -174,6 +174,8 @@
                     <label>Step 2: Select Workshop</label>
                     <select name="workshop" id="workshopSelect" required>
                         <option value="" disabled selected>Tap to select...</option>
+                        <option value="Drone Workshop" class="mar14" data-price="750" disabled>Morning: Drone Education Workshop (CLOSED)</option>
+                        <option value="Arduino Q" class="mar14" data-price="750" disabled>Morning: Arduino Q Workshop (CLOSED)</option>
                         <option value="VR Workshop" class="mar14" data-price="750">Afternoon: VR Workshop (₱750)</option>
                         <option value="Bambu Workshop" class="mar14" data-price="750">Afternoon: 3D Printing Innovation Workshop (₱750)</option>
                         <option value="Arduino Beginner" class="mar15" data-price="750">Morning: Arduino Beginner Workshop (₱750)</option>
@@ -277,7 +279,7 @@
 
                         if (remaining <= 0) {
                             opt.disabled = true;
-                            opt.text = `${opt.text.split('(')[0].trim()} (FULL)`;
+                            opt.text = `${opt.text.split('(')[0].split('₱')[0].trim()} (FULL)`;
                         } else {
                             const baseText = opt.text.split('(')[0].trim();
                             const priceText = opt.getAttribute('data-price') ? `₱${opt.getAttribute('data-price')}` : '₱750';
@@ -285,14 +287,12 @@
                         }
                     }
                 });
-            } catch (e) { 
-                console.warn("Real-time slot sync failed."); 
-            }
+            } catch (e) { console.warn("Slot sync failed."); }
         }
 
         window.addEventListener('load', async () => {
             const today = new Date();
-            const deadline = new Date('2026-03-15'); // Full closure end of event
+            const deadline = new Date('2026-03-16'); // Global event end
             if (today >= deadline) {
                 document.getElementById('regForm').style.display = 'none';
                 document.getElementById('deadlineNotice').style.display = 'block';
@@ -308,17 +308,27 @@
             await updateAvailableSlots();
 
             const currentTime = new Date();
-            const cutoffTime = new Date('2026-03-14T12:00:00'); // 12 PM Today
+            const cutoffTime = new Date('2026-03-14T12:00:00');
 
             allOptions.forEach(option => {
                 if (option.classList.contains(this.value)) {
-                    // Specific logic for March 14 Afternoon Workshops
+                    const newOption = option.cloneNode(true);
+                    
+                    // Manual Lock for Drone/Arduino Q
+                    if (option.value === "Drone Workshop" || option.value === "Arduino Q") {
+                        newOption.disabled = true;
+                        newOption.text = newOption.text.split('(')[0].trim() + " (CLOSED)";
+                    }
+
+                    // Automatic Lock for VR/Bambu at 12pm
                     if (this.value === "mar14" && (option.value === "VR Workshop" || option.value === "Bambu Workshop")) {
                         if (currentTime >= cutoffTime) {
-                            return; // Skip adding these to the list if past 12pm
+                            newOption.disabled = true;
+                            newOption.text = newOption.text.split('(')[0].trim() + " (CLOSED)";
                         }
                     }
-                    workshopSelect.appendChild(option.cloneNode(true));
+
+                    workshopSelect.appendChild(newOption);
                 }
             });
             updatePrice();
