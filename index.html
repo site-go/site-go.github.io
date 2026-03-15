@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="light">
-    <title>Official Registration | Arduino Day PH 2026</title>
+    <title>Registration Closed | Arduino Day PH 2026</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -28,28 +28,12 @@
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        .section-note { font-size: 0.8rem; color: #64748b; margin-bottom: 15px; }
-        .payment-box p { margin: 5px 0; font-size: 0.9rem; }
         .method-info { display: none; margin-top: 10px; padding: 12px; border-radius: 8px; font-size: 0.9rem; }
         
-        .qr-container {
-            text-align: center;
-            margin: 15px 0;
-            padding: 10px;
-            background: white;
-            border-radius: 12px;
-            border: 1px dashed #6366f1;
-        }
-        .qr-code-img {
-            width: 200px;
-            height: 200px;
-            object-fit: contain;
-            border-radius: 4px;
-        }
         .amount-badge {
             display: inline-block;
-            background: #eef2ff;
-            color: #6366f1;
+            background: #f1f5f9;
+            color: #64748b;
             padding: 4px 12px;
             border-radius: 20px;
             font-weight: 700;
@@ -62,7 +46,7 @@
         }
 
         #deadlineNotice {
-            display: none;
+            display: block; /* Forced to show as requested */
             background: #fee2e2;
             color: #b91c1c;
             padding: 20px;
@@ -98,64 +82,28 @@
         <div class="spinner"></div>
         <h2 id="statusTitle" style="margin-top: 20px; font-weight: 800;">Processing...</h2>
         <p id="statusMsg">Please wait.</p>
-        <button id="closeBtn" onclick="location.reload()" class="btn" style="display:none; width:auto; padding: 10px 40px; margin-top:20px; background:#6366f1; color:white; border:none; border-radius:8px;">Back</button>
     </div>
 
     <div class="glass-card">
         <div id="deadlineNotice">
-            REGISTRATION CLOSED<br>
-            The registration deadline for this event (March 15, 2026) has passed.
+            REGISTRATION OFFICIALLY CLOSED<br>
+            All workshop slots for Arduino Day Philippines 2026 are now closed.
         </div>
 
-        <div class="header">
+        <div class="header" style="opacity: 0.6;">
             <div class="logo-container">
                 <img src="ITECH LOGO.png" alt="ITECH Logo" class="site-logo">
             </div>
-            <h2 style="font-weight: 800;">OFFICIAL EVENT REGISTRATION FORM</h2>
+            <h2 style="font-weight: 800;">EVENT REGISTRATION FORM</h2>
             <p>Arduino Day Philippines 2026 | iTECHLAB</p>
         </div>
 
-        <form id="regForm">
+        <form id="regForm" style="pointer-events: none; opacity: 0.6;">
             <div class="form-section">
                 <div class="section-title">SECTION 1: PERSONAL INFORMATION</div>
                 <div class="input-group">
                     <label>Full Name</label>
-                    <input type="text" name="fullname" placeholder="e.g. Juan Dela Cruz" required>
-                </div>
-
-                <div class="checkbox-group">
-                    <label class="check-container">
-                        <input type="checkbox" required>
-                        <span class="checkmark"></span>
-                        <span class="label-text">I confirm the name entered above is correct.</span>
-                    </label>
-                </div>
-
-                <div class="input-group">
-                    <label>Email Address</label>
-                    <input type="email" name="email" required>
-                </div>
-                <div class="input-group">
-                    <label>Mobile Number</label>
-                    <input type="tel" name="mobile" placeholder="09XXXXXXXXX" required>
-                </div>
-            </div>
-
-            <div class="form-section">
-                <div class="section-title">SECTION 2: INSTITUTION DETAILS</div>
-                <div class="input-group">
-                    <label>Institution Name</label>
-                    <input type="text" name="institution" required>
-                </div>
-                <div class="input-group">
-                    <label>Position</label>
-                    <select name="position" required>
-                        <option value="" disabled selected>Select Position</option>
-                        <option value="Student">Student</option>
-                        <option value="Teacher">Teacher</option>
-                        <option value="Industry Professional">Industry Professional</option>
-                        <option value="VIP">School Admin</option>
-                    </select>
+                    <input type="text" placeholder="Registration Closed" disabled>
                 </div>
             </div>
 
@@ -172,230 +120,40 @@
 
                 <div class="input-group" id="workshopWrapper" style="display: none;">
                     <label>Step 2: Select Workshop</label>
-                    <select name="workshop" id="workshopSelect" required>
-                        <option value="" disabled selected>Tap to select...</option>
-                        <option value="Drone Workshop" class="mar14" data-price="750" disabled>Morning: Drone Education Workshop (CLOSED)</option>
-                        <option value="Arduino Q" class="mar14" data-price="750" disabled>Morning: Arduino Q Workshop (CLOSED)</option>
-                        <option value="VR Workshop" class="mar14" data-price="750">Afternoon: VR Workshop (₱750)</option>
-                        <option value="Bambu Workshop" class="mar14" data-price="750">Afternoon: 3D Printing Innovation Workshop (₱750)</option>
-                        <option value="Arduino Beginner" class="mar15" data-price="750">Morning: Arduino Beginner Workshop (₱750)</option>
-                        <option value="Arduino Advance" class="mar15" data-price="750">Afternoon: Arduino Advanced Workshop (₱750)</option>
+                    <select name="workshop" id="workshopSelect" disabled>
+                        <option value="" disabled selected>All Workshops Closed</option>
+                        <option value="Drone Workshop" class="mar14" disabled>Morning: Drone Education Workshop (CLOSED)</option>
+                        <option value="Arduino Q" class="mar14" disabled>Morning: Arduino Q Workshop (CLOSED)</option>
+                        <option value="VR Workshop" class="mar14" disabled>Afternoon: VR Workshop (CLOSED)</option>
+                        <option value="Bambu Workshop" class="mar14" disabled>Afternoon: 3D Printing Innovation Workshop (CLOSED)</option>
+                        <option value="Arduino Beginner" class="mar15" disabled>Morning: Arduino Beginner Workshop (CLOSED)</option>
+                        <option value="Arduino Advance" class="mar15" disabled>Afternoon: Arduino Advanced Workshop (CLOSED)</option>
                     </select>
                 </div>
             </div>
 
-            <div class="form-section">
-                <div class="section-title">SECTION 4: PAYMENT DETAILS</div>
-                <div class="input-group">
-                    <label>Select Payment Method</label>
-                    <select name="payment_mode" id="paymentMethod" required>
-                        <option value="" disabled selected>Choose Payment Method...</option>
-                        <option value="Bank Transfer">Bank Transfer (Metrobank)</option>
-                        <option value="GCash">GCash (Scan QR)</option>
-                        <option value="Cash">Cash (On-site)</option>
-                    </select>
-                </div>
-
-                <div class="payment-box" id="paymentDetailsBox" style="display:none; background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 12px;">
-                    <div id="priceDisplay" style="margin-bottom: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">
-                        <p style="font-weight: 600; font-size: 0.8rem; color: #64748b;">TOTAL TO PAY:</p>
-                        <span id="totalAmount" class="amount-badge">₱750.00</span>
-                    </div>
-
-                    <div id="bankInfo" class="method-info">
-                        <p><strong>Bank:</strong> METROBANK</p>
-                        <p><strong>Account Name:</strong> iTechnologent Inc.</p>
-                        <p><strong>Account Number:</strong> 351-7-35100273-1</p>
-                    </div>
-
-                    <div id="gcashInfo" class="method-info">
-                        <p><strong>GCash Name:</strong> NU*****M U.</p>
-                        <p><strong>GCash Number:</strong> 09094951866</p>
-                        <div class="qr-container">
-                            <img src="qrcode.png" alt="GCash QR Code" class="qr-code-img">
-                        </div>
-                    </div>
-
-                    <div id="cashInfo" class="method-info">
-                        <p style="color: #64748b;">Please pay at the registration booth on the event day.</p>
-                    </div>
-
-                    <div id="onlinePaymentFields" style="display:none; margin-top: 15px;">
-                        <div class="input-group">
-                            <label>Reference Number</label>
-                            <input type="text" name="bank_ref" id="refInput">
-                        </div>
-                        <div class="input-group">
-                            <label>Upload Proof of Payment</label>
-                            <input type="file" id="fileInput" accept="image/*">
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-section">
-                <div class="section-title">SECTION 5: CONSENT</div>
-                <div class="checkbox-group">
-                    <label class="check-container">
-                        <input type="checkbox" required>
-                        <span class="checkmark"></span>
-                        <span class="label-text">I agree to the Privacy Policy.</span>
-                    </label>
-                </div>
-            </div>
-
-            <button type="submit" class="btn" id="submitBtn">Finalize Registration</button>
+            <button type="button" class="btn" style="background: #94a3b8; cursor: not-allowed;">Registration Closed</button>
         </form>
     </div>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbzobZzIXKodSfP9WhjesB1wV6EYowAfiPEqoxZZZZOtRFPumFuKBAN6zJXvCOxTBPg/exec';
-        const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dbd7v3irn/image/upload';
-        const CLOUDINARY_PRESET = 'REGISTRATION';
-
-        const SLOT_LIMITS = {
-            "VR Workshop": 48,
-            "Bambu Workshop": 60,
-            "Arduino Beginner": 60,
-            "Arduino Advance": 60
-        };
-
         const dateSelect = document.getElementById('dateSelect');
         const workshopWrapper = document.getElementById('workshopWrapper');
         const workshopSelect = document.getElementById('workshopSelect');
-        const totalAmountText = document.getElementById('totalAmount');
         const allOptions = Array.from(workshopSelect.options);
 
-        async function updateAvailableSlots() {
-            try {
-                const response = await fetch(`${scriptURL}?action=getCounts&t=${new Date().getTime()}`);
-                const counts = await response.json(); 
-                
-                allOptions.forEach(opt => {
-                    const workshop = opt.value;
-                    if (SLOT_LIMITS[workshop]) {
-                        const registered = counts[workshop] || 0;
-                        const remaining = SLOT_LIMITS[workshop] - registered;
-
-                        if (remaining <= 0) {
-                            opt.disabled = true;
-                            opt.text = `${opt.text.split('(')[0].split('₱')[0].trim()} (FULL)`;
-                        } else {
-                            const baseText = opt.text.split('(')[0].trim();
-                            const priceText = opt.getAttribute('data-price') ? `₱${opt.getAttribute('data-price')}` : '₱750';
-                            opt.text = `${baseText} (${priceText} - ${remaining} slots left)`;
-                        }
-                    }
-                });
-            } catch (e) { console.warn("Slot sync failed."); }
-        }
-
-        window.addEventListener('load', async () => {
-            const today = new Date();
-            const deadline = new Date('2026-03-16'); // Global event end
-            if (today >= deadline) {
-                document.getElementById('regForm').style.display = 'none';
-                document.getElementById('deadlineNotice').style.display = 'block';
-                return;
-            }
-            await updateAvailableSlots();
-        });
-
-        dateSelect.addEventListener('change', async function() {
+        // Force all options to stay disabled even if date is changed
+        dateSelect.addEventListener('change', function() {
             workshopWrapper.style.display = 'block';
-            workshopSelect.innerHTML = '<option value="" disabled selected>Tap to select...</option>';
+            workshopSelect.innerHTML = '<option value="" disabled selected>All Workshops Closed</option>';
             
-            await updateAvailableSlots();
-
-            const currentTime = new Date();
-            const cutoffTime = new Date('2026-03-14T12:00:00');
-
             allOptions.forEach(option => {
                 if (option.classList.contains(this.value)) {
                     const newOption = option.cloneNode(true);
-                    
-                    // Manual Lock for Drone/Arduino Q
-                    if (option.value === "Drone Workshop" || option.value === "Arduino Q") {
-                        newOption.disabled = true;
-                        newOption.text = newOption.text.split('(')[0].trim() + " (CLOSED)";
-                    }
-
-                    // Automatic Lock for VR/Bambu at 12pm
-                    if (this.value === "mar14" && (option.value === "VR Workshop" || option.value === "Bambu Workshop")) {
-                        if (currentTime >= cutoffTime) {
-                            newOption.disabled = true;
-                            newOption.text = newOption.text.split('(')[0].trim() + " (CLOSED)";
-                        }
-                    }
-
+                    newOption.disabled = true;
                     workshopSelect.appendChild(newOption);
                 }
             });
-            updatePrice();
-        });
-
-        workshopSelect.addEventListener('change', updatePrice);
-
-        function updatePrice() {
-            const selectedOption = workshopSelect.options[workshopSelect.selectedIndex];
-            if(!selectedOption) return;
-            const price = selectedOption.getAttribute('data-price') || "750"; 
-            totalAmountText.innerText = `₱${Number(price).toLocaleString()}`;
-        }
-
-        const paymentMethod = document.getElementById('paymentMethod');
-        const paymentDetailsBox = document.getElementById('paymentDetailsBox');
-        const onlineFields = document.getElementById('onlinePaymentFields');
-        const refInput = document.getElementById('refInput');
-        const fileInput = document.getElementById('fileInput');
-
-        paymentMethod.addEventListener('change', function() {
-            paymentDetailsBox.style.display = 'block';
-            document.getElementById('bankInfo').style.display = this.value === 'Bank Transfer' ? 'block' : 'none';
-            document.getElementById('gcashInfo').style.display = this.value === 'GCash' ? 'block' : 'none';
-            document.getElementById('cashInfo').style.display = this.value === 'Cash' ? 'block' : 'none';
-            
-            const isOnline = this.value === 'Bank Transfer' || this.value === 'GCash';
-            onlineFields.style.display = isOnline ? 'block' : 'none';
-            refInput.required = isOnline;
-            fileInput.required = isOnline;
-        });
-
-        const form = document.getElementById('regForm');
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            document.getElementById('loadingOverlay').style.display = 'flex';
-            
-            try {
-                let imageUrl = "Cash Payment";
-                if (fileInput.files.length > 0) {
-                    const cloudData = new FormData();
-                    cloudData.append('file', fileInput.files[0]);
-                    cloudData.append('upload_preset', CLOUDINARY_PRESET);
-                    const cloudRes = await fetch(CLOUDINARY_URL, { method: 'POST', body: cloudData });
-                    const cloudJson = await cloudRes.json();
-                    imageUrl = cloudJson.secure_url;
-                }
-
-                const formData = new FormData(form);
-                const dataObj = {};
-                formData.forEach((value, key) => { dataObj[key] = value; });
-                dataObj['total_price'] = totalAmountText.innerText;
-                dataObj['screenshot_url'] = imageUrl;
-
-                await fetch(scriptURL, { 
-                    method: 'POST', 
-                    mode: 'no-cors', 
-                    body: new URLSearchParams(dataObj)
-                });
-
-                document.getElementById('statusTitle').innerText = "Success!";
-                document.getElementById('statusMsg').innerText = "Registration complete.";
-                document.getElementById('closeBtn').style.display = 'block';
-            } catch (err) {
-                document.getElementById('statusTitle').innerText = "Error";
-                document.getElementById('closeBtn').style.display = 'block';
-            }
         });
     </script>
 </body>
