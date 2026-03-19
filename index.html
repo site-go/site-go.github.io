@@ -148,12 +148,12 @@
                 <div class="section-title">SECTION 3: WORKSHOP SELECTION</div>
                 
                 <div class="input-group">
-                    <label>Choose Schedule</label>
+                    <label>Choose Batch Schedule</label>
                     <select id="dateSelect" name="schedule" required>
-                        <option value="" disabled selected>Select Week</option>
-                        <option value="week1">Batch 1 – April 13 – April 17</option>
-                        <option value="week2">Batch 2 – April 20 – April 24</option>
-                        <option value="week3">Batch 3 – April 27 – May 1</option>
+                        <option value="" disabled selected>Select Batch</option>
+                        <option value="batch1">Batch 1 – April 13 – April 17</option>
+                        <option value="batch2">Batch 2 – April 20 – April 24</option>
+                        <option value="batch3">Batch 3 – April 27 – May 1</option>
                     </select>
                 </div>
 
@@ -165,7 +165,7 @@
                         <option value="2">2 Days (₱1,000)</option>
                         <option value="3">3 Days (₱1,500)</option>
                         <option value="4">4 Days (₱2,000)</option>
-                        <option value="5">5 Days - Full Week Bundle (₱2,000)</option>
+                        <option value="5">5 Days - Full Batch Bundle (₱2,000)</option>
                     </select>
                 </div>
 
@@ -173,10 +173,10 @@
                     <label>Select Workshop</label>
                     <select name="workshop" id="workshopSelect" required>
                         <option value="" disabled selected>Select Workshop...</option>
-                        <option value="Arduino" class="week1 week2 week3">Arduino Workshop</option>
-                        <option value="Mbot2" class="week1 week2 week3">Mbot2 Workshop</option>
-                        <option value="3d Printing" class="week2 week3">3D Printing Workshop</option>
-                        <option value="Drone Workshop" class="week3">Drone Workshop</option>
+                        <option value="Arduino" class="batch1 batch2 batch3">Arduino Workshop</option>
+                        <option value="Mbot2" class="batch1 batch2 batch3">Mbot2 Workshop</option>
+                        <option value="3d Printing" class="batch2 batch3">3D Printing Workshop</option>
+                        <option value="Drone Workshop" class="batch3">Drone Workshop</option>
                     </select>
                 </div>
             </div>
@@ -187,7 +187,7 @@
                 <div style="background: #f8fafc; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #e2e8f0;">
                     <p style="font-size: 0.8rem; font-weight: 700; color: #64748b; margin-bottom: 5px;">TOTAL AMOUNT TO PAY:</p>
                     <div id="totalAmount" class="amount-badge">₱0.00</div>
-                    <div id="bundleNotice" class="bundle-tag">✨ Weekly Bundle Discount Applied!</div>
+                    <div id="bundleNotice" class="bundle-tag">✨ Full Batch Bundle Discount Applied!</div>
                 </div>
 
                 <div class="input-group">
@@ -247,7 +247,8 @@
     </div>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbwtRdlhuUpwZ8crOqk7U1W9G9-ToOV6DWFSXf3ot181KKs2kfQjT8fQoGyQvfBMcgPl/exec';
+        // Ensure this URL is your newly deployed Apps Script URL
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwdJVbN5gHHzrupd1yLPxcmxEfc1IQqz0HiefLbSaAUaWZ1Yu24A0oNt7Wek_-5aXo9/exec';
         const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dbd7v3irn/image/upload';
         const CLOUDINARY_PRESET = 'REGISTRATION';
 
@@ -275,10 +276,10 @@
 
         dateSelect.addEventListener('change', function() {
             workshopWrapper.style.display = 'block';
-            const selectedWeek = this.value;
+            const selectedBatch = this.value;
             workshopSelect.innerHTML = '<option value="" disabled selected>Select Workshop...</option>';
             allWorkshopOptions.forEach(opt => {
-                if (opt.classList.contains(selectedWeek)) {
+                if (opt.classList.contains(selectedBatch)) {
                     workshopSelect.appendChild(opt.cloneNode(true));
                 }
             });
@@ -343,7 +344,6 @@
                 dataObj['total_price'] = totalDisplay.innerText;
                 dataObj['attachment_url'] = imageUrl;
 
-                // Send request
                 const response = await fetch(scriptURL, { 
                     method: 'POST', 
                     body: new URLSearchParams(dataObj)
@@ -351,19 +351,29 @@
 
                 const result = await response.text();
 
-                if (result === "DUPLICATE") {
-                    statusTitle.innerText = "Registration Exists";
-                    statusMsg.innerHTML = `Sorry, <b>${dataObj.fullname}</b> is already registered for ${dataObj.schedule}.`;
+                if (result === "DUPLICATE_EMAIL") {
+                    statusTitle.innerText = "Email Used";
+                    statusMsg.innerHTML = `The email <b>${dataObj.email}</b> is already registered for a workshop batch.`;
                     submitBtn.disabled = false;
-                } else {
+                } 
+                else if (result === "DUPLICATE_NAME") {
+                    statusTitle.innerText = "Name Registered";
+                    statusMsg.innerHTML = `A student with a similar name is already registered. <br><br>Participants are limited to <b>one batch only</b>.`;
+                    submitBtn.disabled = false;
+                } 
+                else if (result === "Success") {
                     statusTitle.innerText = "Success!";
                     statusMsg.innerText = "Your summer workshop registration has been received.";
+                } else {
+                    statusTitle.innerText = "Error";
+                    statusMsg.innerText = "Something went wrong. Please try again.";
+                    submitBtn.disabled = false;
                 }
                 closeBtn.style.display = 'block';
 
             } catch (err) {
                 statusTitle.innerText = "Error";
-                statusMsg.innerText = "Something went wrong. Please check your connection.";
+                statusMsg.innerText = "Network error. Please check your connection.";
                 closeBtn.style.display = 'block';
                 submitBtn.disabled = false;
             }
