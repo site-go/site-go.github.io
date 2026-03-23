@@ -54,16 +54,26 @@
             margin-top: 5px;
         }
 
-        #deadlineNotice {
+        .notice-card {
             display: none;
-            background: #fee2e2;
-            color: #b91c1c;
-            padding: 20px;
+            padding: 30px;
             border-radius: 12px;
             margin-bottom: 20px;
             font-weight: 700;
             text-align: center;
-            border: 2px solid #ef4444;
+            border: 2px solid;
+        }
+        
+        #deadlineNotice {
+            background: #fee2e2;
+            color: #b91c1c;
+            border-color: #ef4444;
+        }
+
+        #upcomingNotice {
+            background: #e0e7ff;
+            color: #3730a3;
+            border-color: #6366f1;
         }
 
         .check-container { display: flex; align-items: center; cursor: pointer; font-size: 0.85rem; margin-top: 10px; color: #475569; }
@@ -80,9 +90,14 @@
     </div>
 
     <div class="glass-card">
-        <div id="deadlineNotice">
+        <div id="deadlineNotice" class="notice-card">
             REGISTRATION CLOSED<br>
             The official registration period for the Summer Workshop 2026 has ended.
+        </div>
+
+        <div id="upcomingNotice" class="notice-card">
+            REGISTRATION OPENS SOON<br>
+            Registration starts on March 30, 2026. We look forward to seeing you!
         </div>
 
         <div class="header">
@@ -247,11 +262,30 @@
     </div>
 
     <script>
-        // Ensure this URL is your newly deployed Apps Script URL
         const scriptURL = 'https://script.google.com/macros/s/AKfycbwdJVbN5gHHzrupd1yLPxcmxEfc1IQqz0HiefLbSaAUaWZ1Yu24A0oNt7Wek_-5aXo9/exec';
         const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dbd7v3irn/image/upload';
         const CLOUDINARY_PRESET = 'REGISTRATION';
 
+        // --- Date Logic ---
+        window.addEventListener('load', () => {
+            const today = new Date();
+            const openDate = new Date('2026-03-30T00:00:00'); // Starts March 30
+            const closeDate = new Date('2026-05-15T23:59:59'); // Ends May 15
+            
+            const form = document.getElementById('regForm');
+            const upcoming = document.getElementById('upcomingNotice');
+            const closed = document.getElementById('deadlineNotice');
+
+            if (today < openDate) {
+                form.style.display = 'none';
+                upcoming.style.display = 'block';
+            } else if (today > closeDate) {
+                form.style.display = 'none';
+                closed.style.display = 'block';
+            }
+        });
+
+        // Form Logic
         const dateSelect = document.getElementById('dateSelect');
         const daysAvail = document.getElementById('daysAvail');
         const workshopWrapper = document.getElementById('workshopWrapper');
@@ -263,14 +297,8 @@
 
         daysAvail.addEventListener('change', function() {
             const days = parseInt(this.value);
-            let price = 0;
-            if (days === 5) {
-                price = 2000;
-                bundleNotice.style.display = 'block';
-            } else {
-                price = days * 500;
-                bundleNotice.style.display = 'none';
-            }
+            let price = days === 5 ? 2000 : days * 500;
+            bundleNotice.style.display = days === 5 ? 'block' : 'none';
             totalDisplay.innerText = `₱${price.toLocaleString()}`;
         });
 
@@ -297,20 +325,9 @@
             document.getElementById('cashInfo').style.display = this.value === 'Cash' ? 'block' : 'none';
             document.getElementById('gcashInfo').style.display = this.value === 'GCash' ? 'block' : 'none';
             document.getElementById('bankInfo').style.display = this.value === 'Bank Transfer' ? 'block' : 'none';
-            const isOnline = this.value === 'Bank Transfer' || this.value === 'GCash';
-            onlineFields.style.display = isOnline ? 'block' : 'none';
+            onlineFields.style.display = (this.value === 'Bank Transfer' || this.value === 'GCash') ? 'block' : 'none';
         });
 
-        window.addEventListener('load', () => {
-            const today = new Date();
-            const deadline = new Date('2026-05-15T23:59:59'); 
-            if (today >= deadline) {
-                document.getElementById('regForm').style.display = 'none';
-                document.getElementById('deadlineNotice').style.display = 'block';
-            }
-        });
-
-        const form = document.getElementById('regForm');
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const submitBtn = document.getElementById('submitBtn');
@@ -321,9 +338,6 @@
 
             submitBtn.disabled = true;
             overlay.style.display = 'flex';
-            statusTitle.innerText = "Processing...";
-            statusMsg.innerText = "Please wait while we secure your slot.";
-            closeBtn.style.display = 'none';
             
             try {
                 let imageUrl = "None/On-site";
@@ -353,27 +367,23 @@
 
                 if (result === "DUPLICATE_EMAIL") {
                     statusTitle.innerText = "Email Used";
-                    statusMsg.innerHTML = `The email <b>${dataObj.email}</b> is already registered for a workshop batch.`;
+                    statusMsg.innerHTML = "This email is already registered.";
                     submitBtn.disabled = false;
-                } 
-                else if (result === "DUPLICATE_NAME") {
+                } else if (result === "DUPLICATE_NAME") {
                     statusTitle.innerText = "Name Registered";
-                    statusMsg.innerHTML = `A student with a similar name is already registered. <br><br>Participants are limited to <b>one batch only</b>.`;
+                    statusMsg.innerHTML = "A student with this name is already registered.";
                     submitBtn.disabled = false;
-                } 
-                else if (result === "Success") {
+                } else if (result === "Success") {
                     statusTitle.innerText = "Success!";
-                    statusMsg.innerText = "Your summer workshop registration has been received.";
+                    statusMsg.innerText = "Your registration has been received.";
                 } else {
-                    statusTitle.innerText = "Error";
-                    statusMsg.innerText = "Something went wrong. Please try again.";
-                    submitBtn.disabled = false;
+                    throw new Error();
                 }
                 closeBtn.style.display = 'block';
 
             } catch (err) {
                 statusTitle.innerText = "Error";
-                statusMsg.innerText = "Network error. Please check your connection.";
+                statusMsg.innerText = "Something went wrong. Please try again.";
                 closeBtn.style.display = 'block';
                 submitBtn.disabled = false;
             }
