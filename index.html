@@ -132,7 +132,7 @@
                     <div class="input-group" style="flex: 2;">
                         <label for="suffix">Suffix</label>
                         <select id="suffix" name="suffix">
-                            <option value="" selected>None</option>
+                            <option value="None" selected>None</option>
                             <option value="Jr.">Jr.</option>
                             <option value="Sr.">Sr.</option>
                             <option value="II">II</option>
@@ -226,9 +226,7 @@
                 </div>
 
                 <div id="sessionSelectionWrapper">
-                    <p style="font-size: 0.8rem; font-weight: 700; color: #6366f1; margin-bottom: 10px;">
-                        Select your Sessions:
-                    </p>
+                    <p style="font-size: 0.8rem; font-weight: 700; color: #6366f1; margin-bottom: 10px;">Select your Sessions:</p>
                     <div class="topic-scroll-area" style="max-height: 400px; overflow-y: auto; background: #f8fafc; padding: 15px; border-radius: 12px; border: 1.5px solid #e2e8f0;">
                         <div id="day1Content" class="day-content" style="display:none;">
                             <div class="day-header">DAY 1 - ICT ESSENTIALS</div>
@@ -294,9 +292,7 @@
                 <label class="check-container" style="display: flex; align-items: flex-start; cursor: pointer;">
                     <input type="checkbox" required style="display: none;" id="finalCheck">
                     <span class="checkmark"></span>
-                    <span style="font-size: 0.85rem; color: #475569; line-height: 1.4;">
-                        I confirm my attendance for the training.
-                    </span>
+                    <span style="font-size: 0.85rem; color: #475569; line-height: 1.4;">I confirm my attendance for the training.</span>
                 </label>
             </div>
             <button type="submit" class="btn" id="submitBtn" disabled>Registration Starts March 30</button>
@@ -304,83 +300,61 @@
     </div>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbzPYE0mntbLD0QoxnxwmUH_ozKFmotfXGCt7kiF3cO5rGGkuN-6PIzon8YcxC833D6U/exec';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxjOzsDoroixpG3xZi-RLMWiFJTQxR2IH2O5Mcslk4VkAIgAMAdaBshjfLwSHPochho/exec';
 
-        // --- COUNTDOWN LOGIC ---
+        // --- COUNTDOWN ---
         const startTime = new Date("2026-03-30T12:00:00+08:00").getTime();
-        const form = document.getElementById('regForm');
-        const submitBtn = document.getElementById('submitBtn');
-        const countdownEl = document.getElementById('countdown');
-        const lockMsg = document.getElementById('lockMsg');
-
         function updateCountdown() {
-            const now = new Date().getTime();
-            const distance = startTime - now;
+            const distance = startTime - new Date().getTime();
+            const btn = document.getElementById('submitBtn');
             if (distance < 0) {
-                form.classList.remove('form-locked');
-                submitBtn.disabled = false;
-                submitBtn.innerText = "Submit Registration";
-                countdownEl.innerHTML = "REGISTRATION IS NOW OPEN";
-                countdownEl.style.color = "#059669";
-                lockMsg.style.display = "none";
+                document.getElementById('regForm').classList.remove('form-locked');
+                btn.disabled = false;
+                btn.innerText = "Submit Registration";
+                document.getElementById('countdown').innerHTML = "REGISTRATION IS NOW OPEN";
+                document.getElementById('countdown').style.color = "#059669";
+                document.getElementById('lockMsg').style.display = "none";
                 return;
             }
             const d = Math.floor(distance / (1000 * 60 * 60 * 24));
             const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const s = Math.floor((distance % (1000 * 60)) / 1000);
-            countdownEl.innerHTML = `${d}d ${h}h ${m}m ${s}s`;
+            document.getElementById('countdown').innerHTML = `${d}d ${h}h ${m}m ${s}s`;
         }
-        setInterval(updateCountdown, 1000);
-        updateCountdown();
+        setInterval(updateCountdown, 1000); updateCountdown();
 
-        // --- UI LOGIC ---
+        // --- UI TOGGLES ---
         const nameConfirmBtn = document.getElementById('nameConfirmBtn');
-        const nameCheckHidden = document.getElementById('nameCheckHidden');
-        const confirmIcon = document.getElementById('confirmIcon');
-
         nameConfirmBtn.addEventListener('click', () => {
-            const isConfirmed = nameCheckHidden.checked;
-            nameCheckHidden.checked = !isConfirmed;
-            if (nameCheckHidden.checked) {
-                nameConfirmBtn.classList.add('active');
-                confirmIcon.innerText = "✅";
-            } else {
-                nameConfirmBtn.classList.remove('active');
-                confirmIcon.innerText = "⬜";
-            }
+            const check = document.getElementById('nameCheckHidden');
+            check.checked = !check.checked;
+            nameConfirmBtn.classList.toggle('active', check.checked);
+            document.getElementById('confirmIcon').innerText = check.checked ? "✅" : "⬜";
         });
 
         const dateSelect = document.getElementById('dateSelect');
         const daySelect = document.getElementById('daySelect');
-        const sessionWrapper = document.getElementById('sessionSelectionWrapper');
-        const dayContents = document.querySelectorAll('.day-content');
-
         function toggleSessions() {
+            const wrapper = document.getElementById('sessionSelectionWrapper');
             if (dateSelect.value && daySelect.value) {
-                sessionWrapper.style.display = 'block';
-                setTimeout(() => { sessionWrapper.style.opacity = '1'; }, 10);
-                dayContents.forEach(div => div.style.display = 'none');
-                const target = document.getElementById(daySelect.value + 'Content');
-                if (target) target.style.display = 'block';
+                wrapper.style.display = 'block';
+                setTimeout(() => wrapper.style.opacity = '1', 10);
+                document.querySelectorAll('.day-content').forEach(div => div.style.display = 'none');
+                document.getElementById(daySelect.value + 'Content').style.display = 'block';
             } else {
-                sessionWrapper.style.opacity = '0';
-                setTimeout(() => { sessionWrapper.style.display = 'none'; }, 400);
+                wrapper.style.opacity = '0';
+                setTimeout(() => wrapper.style.display = 'none', 400);
             }
         }
         dateSelect.addEventListener('change', toggleSessions);
         daySelect.addEventListener('change', toggleSessions);
 
-        document.getElementById('mobileInput').addEventListener('input', (e) => {
-            e.target.value = e.target.value.replace(/[^0-9]/g, '');
-        });
-
-        // --- SUBMIT LOGIC ---
-        form.addEventListener('submit', async (e) => {
+        // --- SUBMIT ---
+        document.getElementById('regForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            if (!nameCheckHidden.checked) { alert("Please confirm your name spelling first."); return; }
+            if (!document.getElementById('nameCheckHidden').checked) { alert("Please confirm your name spelling first."); return; }
 
-            // NEW: Get both Full Names (for summary) and Shorthand Codes (for matrix)
             const selectedCheckboxes = Array.from(document.querySelectorAll('input[name="topic"]:checked'));
             if (selectedCheckboxes.length === 0) { alert("Please select at least one training session."); return; }
 
@@ -388,42 +362,39 @@
             const topicCodes = selectedCheckboxes.map(cb => cb.value);
 
             const overlay = document.getElementById('loadingOverlay');
-            const statusTitle = document.getElementById('statusTitle');
-            const statusMsg = document.getElementById('statusMsg');
-            const closeBtn = document.getElementById('closeBtn');
-
-            submitBtn.disabled = true;
+            document.getElementById('submitBtn').disabled = true;
             overlay.style.display = 'flex';
             
             try {
-                const formData = new FormData(form);
+                const formData = new FormData(e.target);
                 const dataObj = {};
                 formData.forEach((value, key) => { if (key !== 'topic') dataObj[key] = value; });
 
-                // Map Full Names to 'workshop' and Shorthand Codes to 'topic'
+                // NEW FORMAT: FIRSTNAME LASTNAME SUFFIX
+                const fname = dataObj.firstname.trim();
+                const lname = dataObj.lastname.trim();
+                const suffix = (dataObj.suffix && dataObj.suffix !== "None") ? " " + dataObj.suffix : "";
+                dataObj['fullname'] = `${fname} ${lname}${suffix}`.replace(/\s+/g, ' ').toUpperCase();
+
                 dataObj['workshop'] = topicFullNames.join(", ");
                 dataObj['topic'] = topicCodes.join(", ");
                 
-                const mi = dataObj.mi ? dataObj.mi.trim().toUpperCase() + "." : "";
-                const suffix = dataObj.suffix ? " " + dataObj.suffix : "";
-                dataObj['fullname'] = `${dataObj.lastname.trim()}, ${dataObj.firstname.trim()}${mi}${suffix}`.toUpperCase();
-
                 const response = await fetch(scriptURL, { method: 'POST', body: new URLSearchParams(dataObj) });
                 const result = await response.text();
 
                 if (result === "Success") {
-                    statusTitle.innerText = "Success!";
-                    statusMsg.innerText = "Registration complete. We look forward to seeing you!";
+                    document.getElementById('statusTitle').innerText = "Success!";
+                    document.getElementById('statusMsg').innerText = "Registration complete.";
                 } else if (result === "DUPLICATE_EMAIL") {
-                    statusTitle.innerText = "Notice";
-                    statusMsg.innerText = "This email is already registered.";
-                    submitBtn.disabled = false;
+                    document.getElementById('statusTitle').innerText = "Notice";
+                    document.getElementById('statusMsg').innerText = "Email already registered.";
+                    document.getElementById('submitBtn').disabled = false;
                 } else { throw new Error(result); }
             } catch (err) {
-                statusTitle.innerText = "Error";
-                statusMsg.innerText = "Submission failed. Please check your connection.";
-                submitBtn.disabled = false;
-            } finally { closeBtn.style.display = 'block'; }
+                document.getElementById('statusTitle').innerText = "Error";
+                document.getElementById('statusMsg').innerText = "Submission failed.";
+                document.getElementById('submitBtn').disabled = false;
+            } finally { document.getElementById('closeBtn').style.display = 'block'; }
         });
     </script>
 </body>
