@@ -224,7 +224,9 @@
                 </div>
 
                 <div id="sessionSelectionWrapper">
-                    <p style="font-size: 0.8rem; font-weight: 700; color: #6366f1; margin-bottom: 10px;">Select your Sessions:</p>
+                    <p style="font-size: 0.8rem; font-weight: 700; color: #6366f1; margin-bottom: 2px;">Select your Sessions:</p>
+                    <p style="font-size: 0.7rem; color: #64748b; margin-bottom: 10px;">(Limit: 1 session for AM and 1 for PM)</p>
+                    
                     <div class="topic-scroll-area" style="max-height: 400px; overflow-y: auto; background: #f8fafc; padding: 15px; border-radius: 12px; border: 1.5px solid #e2e8f0;">
                         <div id="day1Content" class="day-content" style="display:none;">
                             <div class="day-header">DAY 1 - ICT ESSENTIALS</div>
@@ -333,9 +335,13 @@
 
         const dateSelect = document.getElementById('dateSelect');
         const daySelect = document.getElementById('daySelect');
+        
         function toggleSessions() {
             const wrapper = document.getElementById('sessionSelectionWrapper');
             if (dateSelect.value && daySelect.value) {
+                // Clear existing selections when day changes to avoid cross-day selection errors
+                document.querySelectorAll('input[name="topic"]').forEach(cb => cb.checked = false);
+                
                 wrapper.style.display = 'block';
                 setTimeout(() => wrapper.style.opacity = '1', 10);
                 document.querySelectorAll('.day-content').forEach(div => div.style.display = 'none');
@@ -347,6 +353,25 @@
         }
         dateSelect.addEventListener('change', toggleSessions);
         daySelect.addEventListener('change', toggleSessions);
+
+        // --- 1 PER AM/PM LOGIC ---
+        document.querySelectorAll('input[name="topic"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                if (this.checked) {
+                    const isAM = this.value.includes("-AM-");
+                    const timeGroup = isAM ? "-AM-" : "-PM-";
+                    const currentDayId = daySelect.value + 'Content';
+                    
+                    // Uncheck others in the same time group (AM or PM) for the selected day
+                    const siblings = document.querySelectorAll(`#${currentDayId} input[name="topic"]`);
+                    siblings.forEach(sibling => {
+                        if (sibling !== this && sibling.value.includes(timeGroup)) {
+                            sibling.checked = false;
+                        }
+                    });
+                }
+            });
+        });
 
         // --- SUBMIT ---
         document.getElementById('regForm').addEventListener('submit', async (e) => {
@@ -368,13 +393,12 @@
                 const dataObj = {};
                 formData.forEach((value, key) => { if (key !== 'topic') dataObj[key] = value; });
 
-                // NEW FORMAT: FIRSTNAME LASTNAME SUFFIX
                 const fname = dataObj.firstname.trim();
                 const lname = dataObj.lastname.trim();
                 const suffix = (dataObj.suffix && dataObj.suffix !== "None") ? " " + dataObj.suffix : "";
                 dataObj['fullname'] = `${fname} ${lname}${suffix}`.replace(/\s+/g, ' ').toUpperCase();
 
-                dataObj['workshop'] = topicFullNames.join(", ");
+                dataObj['workshop'] = topicFullNames.join(" | ");
                 dataObj['topic'] = topicCodes.join(", ");
                 
                 const response = await fetch(scriptURL, { method: 'POST', body: new URLSearchParams(dataObj) });
