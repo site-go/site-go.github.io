@@ -26,7 +26,6 @@
         .countdown-text { font-family: monospace; font-weight: 700; color: #1e293b; font-size: 1.1rem; }
         .registration-closed-msg { font-weight: 700; color: #b91c1c; margin-top: 10px; }
         
-        /* State for disabled form */
         .form-locked { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
 
         @media (max-width: 480px) {
@@ -48,7 +47,7 @@
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* --- NAME CONFIRMATION --- */
+        /* --- UI ELEMENTS --- */
         .confirm-btn {
             background: #f1f5f9; color: #ff0000; border: 1.5px solid #cbd5e1;
             padding: 10px 15px; border-radius: 10px; font-size: 0.8rem;
@@ -60,30 +59,24 @@
         .section-title { font-weight: 800; color: #6366f1; margin-bottom: 15px; border-left: 4px solid #6366f1; padding-left: 10px; }
         .checkmark { height: 18px; width: 18px; background-color: #f1f5f9; border: 1.5px solid #cbd5e1; border-radius: 4px; margin-right: 10px; }
         
-        input[type="date"] { font-family: inherit; color: #1e293b; }
-
         /* --- TOPIC STYLING --- */
         .topic-item {
             display: flex; align-items: center; gap: 10px;
             font-size: 0.85rem; font-weight: 600; color: #475569;
-            margin-bottom: 8px; cursor: pointer; padding: 5px;
-            border-radius: 6px; transition: background 0.2s;
+            margin-bottom: 8px; cursor: pointer; padding: 8px;
+            border-radius: 8px; transition: all 0.2s;
+            border: 1px solid transparent;
         }
-        .topic-item:hover { background: #fff; color: #6366f1; }
+        .topic-item:hover { background: #fff; border-color: #e2e8f0; }
+        .topic-item.selected { background: #e0e7ff; color: #4338ca; border-color: #6366f1; }
         .topic-item input { width: 18px; height: 18px; accent-color: #6366f1; cursor: pointer; }
         
         .day-header {
             font-weight: 800; font-size: 0.8rem; color: #1e293b;
-            background: #e0e7ff; padding: 5px 10px; border-radius: 6px;
-            margin: 15px 0 10px;
+            background: #e2e8f0; padding: 5px 10px; border-radius: 6px;
+            margin: 20px 0 10px;
         }
-        .time-label { font-size: 0.7rem; font-weight: 800; color: #64748b; margin-bottom: 5px; text-transform: uppercase; }
-        
-        #sessionSelectionWrapper {
-            display: none;
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
+        .time-label { font-size: 0.7rem; font-weight: 800; color: #6366f1; margin: 10px 0 5px; text-transform: uppercase; letter-spacing: 1px; }
     </style>
 </head>
 <body>
@@ -106,7 +99,7 @@
         </div>
 
         <div class="timeline-container">
-            <div class="timeline-title"></div>
+            <div class="timeline-title">REGISTRATION COUNTDOWN</div>
             <div id="countdown" class="countdown-text">Calculating time...</div>
             <p id="lockMsg" class="registration-closed-msg">Form will unlock at exactly March 30, 2026, 12:00 PM (PH Time)</p>
         </div>
@@ -199,90 +192,75 @@
 
             <div class="form-section">
                 <div class="section-title">Section 3: Training Selection</div>
-                <div style="display: flex; gap: 15px;" class="flex-mobile">
-                    <div class="input-group" style="flex: 1;">
-                        <label for="dateSelect">Training Batch</label>
-                        <select id="dateSelect" name="schedule" required>
-                            <option value="" disabled selected>Select Batch</option>
-                            <option value="batch1">Batch 1 - May 11–15 2026</option>
-                            <option value="batch2">Batch 2 - May 18–22 2026</option>
-                            <option value="batch5">Batch 5 - June 8–12 2026</option>
-                            <option value="batch6">Batch 6 - June 15–19 2026</option>
-                        </select>
-                    </div>
-                    <div class="input-group" style="flex: 1;">
-                        <label for="daySelect">Select Training Day</label>
-                        <select id="daySelect" required>
-                            <option value="" disabled selected>Choose Day...</option>
-                            <option value="day1">Day 1: ICT Essentials</option>
-                            <option value="day2">Day 2: Programming</option>
-                            <option value="day3">Day 3: ICT & Robotics</option>
-                            <option value="day4">Day 4: Robotics & Circuits</option>
-                            <option value="day5">Day 5: IoT & Challenges</option>
-                        </select>
-                    </div>
+                <div class="input-group">
+                    <label for="dateSelect">Training Batch</label>
+                    <select id="dateSelect" name="schedule" required>
+                        <option value="" disabled selected>Select Batch</option>
+                        <option value="batch1">Batch 1 - May 11–15 2026</option>
+                        <option value="batch2">Batch 2 - May 18–22 2026</option>
+                        <option value="batch5">Batch 5 - June 8–12 2026</option>
+                        <option value="batch6">Batch 6 - June 15–19 2026</option>
+                    </select>
                 </div>
 
-                <div id="sessionSelectionWrapper">
-                    <p style="font-size: 0.8rem; font-weight: 700; color: #6366f1; margin-bottom: 2px;">Select your Sessions:</p>
-                    <p style="font-size: 0.7rem; color: #64748b; margin-bottom: 10px;">(Limit: 1 session for AM and 1 for PM)</p>
+                <p style="font-size: 0.85rem; font-weight: 800; color: #1e293b; margin-bottom: 2px;">Select Sessions:</p>
+                <p style="font-size: 0.75rem; color: #64748b; margin-bottom: 12px; font-style: italic;">Note: Maximum 1 session per AM and 1 per PM daily.</p>
+                
+                <div class="topic-scroll-area" style="max-height: 450px; overflow-y: auto; background: #f8fafc; padding: 15px; border-radius: 12px; border: 1.5px solid #e2e8f0;">
                     
-                    <div class="topic-scroll-area" style="max-height: 400px; overflow-y: auto; background: #f8fafc; padding: 15px; border-radius: 12px; border: 1.5px solid #e2e8f0;">
-                        <div id="day1Content" class="day-content" style="display:none;">
-                            <div class="day-header">DAY 1 - ICT ESSENTIALS</div>
-                            <div class="time-label">MORNING</div>
-                            <label class="topic-item"><input type="checkbox" name="topic" value="D1-AM-ICT-Essentials"> CompuThinkers K – ICT Essentials for Young Learners - CompuThinkers 1 – Computer Fundamentals for Kids</label>
-                            <label class="topic-item"><input type="checkbox" name="topic" value="D1-AM-Scratch-mBlock"> Scratch Fun with mBlock Game Features – Code Games and Learn</label>
-                            <label class="topic-item"><input type="checkbox" name="topic" value="D1-AM-Productivity-Tools"> Productivity Tools – Word Desktop Publishing and Online Collaboration Tools</label>
-                            <div class="time-label">AFTERNOON</div>
-                            <label class="topic-item"><input type="checkbox" name="topic" value="D1-PM-Scratch-Jr"> CompuThinkers 2 – Basic Programming with Scratch Jr</label>
-                            <label class="topic-item"><input type="checkbox" name="topic" value="D1-PM-Web-Design"> Web Design Basics: HTML and CSS – Web Design and Concepts</label>
-                            <label class="topic-item"><input type="checkbox" name="topic" value="D1-PM-Inkscape"> Designing Vector Graphics with Inkscape - Understanding Vector and Raster Design with Inkscape</label>
-                        </div>
-                        <div id="day2Content" class="day-content" style="display:none;">
-                            <div class="day-header">DAY 2 - ICT & PROGRAMMING</div>
-                            <div class="time-label">MORNING</div>
-                            <label class="topic-item"><input type="checkbox" name="topic" value="D2-AM-PowerPoint"> CompuThinkers 3 – Working with PowerPoint</label>
-                            <label class="topic-item"><input type="checkbox" name="topic" value="D2-AM-Video-Creation"> Video Content Creation Made Easy - Lights Camera Click with Clipchamp</label>
-                            <label class="topic-item"><input type="checkbox" name="topic" value="D2-AM-Java-Intro"> Java Programming Fundamentals - Introduction to Programming with Java</label>
-                            <div class="time-label">AFTERNOON</div>
-                            <label class="topic-item"><input type="checkbox" name="topic" value="D2-PM-HTML-Basics"> CompuThinkers 4 – HTML Basics</label>
-                            <label class="topic-item"><input type="checkbox" name="topic" value="D2-PM-Python"> Python Coding Essentials - Learning to Code with Python</label>
-                            <label class="topic-item"><input type="checkbox" name="topic" value="D2-PM-ECommerce"> E-Commerce: Business in the Digital Age - How to Market Your Product Online?</label>
-                        </div>
-                        <div id="day3Content" class="day-content" style="display:none;">
-                            <div class="day-header">DAY 3 - ICT & ROBOTICS INTRO</div>
-                            <div class="time-label">MORNING</div>
-                            <label class="topic-item"><input type="checkbox" name="topic" value="D3-AM-Multimedia"> CompuThinkers 5–6 – Multimedia Creation and Digital Presentation</label>
-                            <label class="topic-item"><input type="checkbox" name="topic" value="D3-AM-Media-Literacy"> Media and Information Literacy / Empowerment Technologies</label>
-                            <label class="topic-item"><input type="checkbox" name="topic" value="D3-AM-Java-Advance"> Java Advanced - Designing User Interfaces with Java GUI</label>
-                            <div class="time-label">AFTERNOON</div>
-                            <label class="topic-item"><input type="checkbox" name="topic" value="D3-PM-Arduino-Intro"> Arduino 1 - Starting with Arduino RoboClass - RoboPrime1 - Introduction to Codey Rocky using the Mobile App</label>
-                            <label class="topic-item"><input type="checkbox" name="topic" value="D3-PM-RoboStarter"> RoboClass RoboStarter K – A Stepping Stone in Robotics World </label>
-                            <label class="topic-item"><input type="checkbox" name="topic" value="D3-PM-RoboJuno-1"> RoboClass - RoboJuno 1- CyberPi Console</label>
-                        </div>
-                        <div id="day4Content" class="day-content" style="display:none;">
-                            <div class="day-header">DAY 4 - ROBOTICS & CIRCUITS</div>
-                            <div class="time-label">MORNING</div>
-                            <label class="topic-item"><input type="checkbox" name="topic" value="D4-AM-Arduino-Exp"> Arduino 2 - Exploring Arduino</label>
-                            <label class="topic-item"><input type="checkbox" name="topic" value="D4-AM-Codey-Rocky"> RoboClass - RoboPrime 2 -3 Let’s Code with Codey Rocky</label>
-                            <label class="topic-item"><input type="checkbox" name="topic" value="D4-AM-Robo-Juno-2"> RoboClass - RoboJuno 2 – Assemble mBot2</label>
-                            <div class="time-label">AFTERNOON</div>
-                            <label class="topic-item"><input type="checkbox" name="topic" value="D4-PM-Arduino-Circuits"> Arduino 3- 4 - Designing and Building Arduino Circuits</label>
-                            <label class="topic-item"><input type="checkbox" name="topic" value="D4-PM-MicroBit"> RoboClass - RoboPrime 4 - MicroBit Companion</label>
-                        </div>
-                        <div id="day5Content" class="day-content" style="display:none;">
-                            <div class="day-header">DAY 5 - IoT & CHALLENGES</div>
-                            <div class="time-label">MORNING</div>
-                            <label class="topic-item"><input type="checkbox" name="topic" value="D5-AM-Arduino-R4"> Arduino UNO R4 - Blink Build and Learn</label>
-                            <label class="topic-item"><input type="checkbox" name="topic" value="D5-AM-MicroBit-Scratch"> RoboClass - RoboPrime 5 MicroBit with Scratch</label>
-                            <label class="topic-item"><input type="checkbox" name="topic" value="D5-AM-Mbot-2-Manual-Challenge"> RoboClass - mBot 2: Manual Challenge </label>
-                            <div class="time-label">AFTERNOON</div>
-                            <label class="topic-item"><input type="checkbox" name="topic" value="D5-PM-Arduino-IoT"> Arduino UNO R4 - Code Connect and Create with IoT</label>
-                            <label class="topic-item"><input type="checkbox" name="topic" value="D5-PM-RingBit"> RoboClass - RoboPrime 6 - Build and Connect with RingBit MicroBit</label>
-                            <label class="topic-item"><input type="checkbox" name="topic" value="D5-PM-Autonomous-Challenge"> RoboClass - mBot 2: Autonomous Challenge</label>
-                        </div>
-                    </div>
+                    <div class="day-header">DAY 1 - ICT ESSENTIALS</div>
+                    <div class="time-label">MORNING</div>
+                    <label class="topic-item"><input type="checkbox" name="topic" value="D1-AM-ICT-Essentials"> CompuThinkers K – ICT Essentials for Young Learners,  CompuThinkers 1 – Computer Fundamentals for Kids</label>
+                    <label class="topic-item"><input type="checkbox" name="topic" value="D1-AM-Scratch-mBlock"> Scratch Fun with mBlock Game Features – Code Games and Learn</label>
+                    <label class="topic-item"><input type="checkbox" name="topic" value="D1-AM-Productivity-Tools"> Productivity Tools – Word Desktop Publishing and Online Collaboration Tools</label>
+                    
+                    <div class="time-label">AFTERNOON</div>
+                    <label class="topic-item"><input type="checkbox" name="topic" value="D1-PM-Scratch-Jr"> CompuThinkers 2 – Basic Programming with Scratch Jr</label>
+                    <label class="topic-item"><input type="checkbox" name="topic" value="D1-PM-Web-Design"> Web Design Basics: HTML and CSS – Web Design and Concepts</label>
+                    <label class="topic-item"><input type="checkbox" name="topic" value="D1-PM-Inkscape"> Designing Vector Graphics with Inkscape - Understanding Vector and Raster Design with Inkscape</label>
+
+                    <div class="day-header">DAY 2 - ICT & PROGRAMMING</div>
+                    <div class="time-label">MORNING</div>
+                    <label class="topic-item"><input type="checkbox" name="topic" value="D2-AM-PowerPoint"> CompuThinkers 3 – Working with PowerPoint</label>
+                    <label class="topic-item"><input type="checkbox" name="topic" value="D2-AM-Video-Creation"> Video Content Creation Made Easy - Lights Camera Click with Clipchamp</label>
+                    <label class="topic-item"><input type="checkbox" name="topic" value="D2-AM-Java-Intro"> Java Programming Fundamentals - Introduction to Programming with Java</label>
+                    
+                    <div class="time-label">AFTERNOON</div>
+                    <label class="topic-item"><input type="checkbox" name="topic" value="D2-PM-HTML-Basics"> CompuThinkers 4 – HTML Basics</label>
+                    <label class="topic-item"><input type="checkbox" name="topic" value="D2-PM-Python"> Python Coding Essentials - Learning to Code with Python</label>
+                    <label class="topic-item"><input type="checkbox" name="topic" value="D2-PM-ECommerce"> E-Commerce: Business in the Digital Age - How to Market Your Product Online?</label>
+
+                    <div class="day-header">DAY 3 - ICT & ROBOTICS INTRO</div>
+                    <div class="time-label">MORNING</div>
+                    <label class="topic-item"><input type="checkbox" name="topic" value="D3-AM-Multimedia"> CompuThinkers 5–6 – Multimedia Creation and Digital Presentation</label>
+                    <label class="topic-item"><input type="checkbox" name="topic" value="D3-AM-Media-Literacy"> Media and Information Literacy / Empowerment Technologies</label>
+                    <label class="topic-item"><input type="checkbox" name="topic" value="D3-AM-Java-Advance"> Java Advanced - Designing User Interfaces with Java GUI</label>
+                    
+                    <div class="time-label">AFTERNOON</div>
+                    <label class="topic-item"><input type="checkbox" name="topic" value="D3-PM-Arduino-Intro"> Arduino 1 - Starting with Arduino, RoboClass RoboPrime1- Introduction to Codey Rocky using the Mobile App</label>
+                    <label class="topic-item"><input type="checkbox" name="topic" value="D3-PM-RoboStarter"> RoboClass RoboStarter K – A Stepping Stone in Robotics World </label>
+                    <label class="topic-item"><input type="checkbox" name="topic" value="D3-PM-RoboJuno-1"> RoboClass - RoboJuno 1- CyberPi Console</label>
+
+                    <div class="day-header">DAY 4 - ROBOTICS & CIRCUITS</div>
+                    <div class="time-label">MORNING</div>
+                    <label class="topic-item"><input type="checkbox" name="topic" value="D4-AM-Arduino-Exp"> Arduino 2 - Exploring Arduino</label>
+                    <label class="topic-item"><input type="checkbox" name="topic" value="D4-AM-Codey-Rocky"> RoboClass - RoboPrime 2 -3 Let’s Code with Codey Rocky</label>
+                    <label class="topic-item"><input type="checkbox" name="topic" value="D4-AM-Robo-Juno-2"> RoboClass - RoboJuno 2 – Assemble mBot2</label>
+                    
+                    <div class="time-label">AFTERNOON</div>
+                    <label class="topic-item"><input type="checkbox" name="topic" value="D4-PM-Arduino-Circuits"> Arduino 3- 4 - Designing and Building Arduino Circuits</label>
+                    <label class="topic-item"><input type="checkbox" name="topic" value="D4-PM-MicroBit"> RoboClass - RoboPrime 4 - MicroBit Companion</label>
+
+                    <div class="day-header">DAY 5 - IoT & CHALLENGES</div>
+                    <div class="time-label">MORNING</div>
+                    <label class="topic-item"><input type="checkbox" name="topic" value="D5-AM-Arduino-R4"> Arduino UNO R4 - Blink Build and Learn</label>
+                    <label class="topic-item"><input type="checkbox" name="topic" value="D5-AM-MicroBit-Scratch"> RoboClass - RoboPrime 5 MicroBit with Scratch</label>
+                    <label class="topic-item"><input type="checkbox" name="topic" value="D5-AM-Mbot-2-Manual-Challenge"> RoboClass - mBot 2: Manual Challenge </label>
+                    
+                    <div class="time-label">AFTERNOON</div>
+                    <label class="topic-item"><input type="checkbox" name="topic" value="D5-PM-Arduino-IoT"> Arduino UNO R4 - Code Connect and Create with IoT</label>
+                    <label class="topic-item"><input type="checkbox" name="topic" value="D5-PM-RingBit"> RoboClass - RoboPrime 6 - Build and Connect with RingBit MicroBit</label>
+                    <label class="topic-item"><input type="checkbox" name="topic" value="D5-PM-Autonomous-Challenge"> RoboClass - mBot 2: Autonomous Challenge</label>
                 </div>
             </div>
 
@@ -290,7 +268,7 @@
                 <label class="check-container" style="display: flex; align-items: flex-start; cursor: pointer;">
                     <input type="checkbox" required style="display: none;" id="finalCheck">
                     <span class="checkmark"></span>
-                    <span style="font-size: 0.85rem; color: #475569; line-height: 1.4;">I confirm my attendance for the training.</span>
+                    <span style="font-size: 0.85rem; color: #475569; line-height: 1.4;">I confirm my attendance for the selected training sessions.</span>
                 </label>
             </div>
             <button type="submit" class="btn" id="submitBtn" disabled>Registration Starts March 30</button>
@@ -300,13 +278,15 @@
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxjOzsDoroixpG3xZi-RLMWiFJTQxR2IH2O5Mcslk4VkAIgAMAdaBshjfLwSHPochho/exec';
 
-        // --- COUNTDOWN ---
+        // --- COUNTDOWN LOGIC ---
         const startTime = new Date("2026-03-30T12:00:00+08:00").getTime();
         function updateCountdown() {
             const distance = startTime - new Date().getTime();
             const btn = document.getElementById('submitBtn');
+            const form = document.getElementById('regForm');
+            
             if (distance < 0) {
-                document.getElementById('regForm').classList.remove('form-locked');
+                form.classList.remove('form-locked');
                 btn.disabled = false;
                 btn.innerText = "Submit Registration";
                 document.getElementById('countdown').innerHTML = "REGISTRATION IS NOW OPEN";
@@ -322,7 +302,7 @@
         }
         setInterval(updateCountdown, 1000); updateCountdown();
 
-        // --- UI TOGGLES ---
+        // --- NAME CONFIRMATION ---
         const nameConfirmBtn = document.getElementById('nameConfirmBtn');
         nameConfirmBtn.addEventListener('click', () => {
             const check = document.getElementById('nameCheckHidden');
@@ -331,90 +311,91 @@
             document.getElementById('confirmIcon').innerText = check.checked ? "✅" : "⬜";
         });
 
-        const dateSelect = document.getElementById('dateSelect');
-        const daySelect = document.getElementById('daySelect');
-        
-        function toggleSessions() {
-            const wrapper = document.getElementById('sessionSelectionWrapper');
-            if (dateSelect.value && daySelect.value) {
-                // Clear existing selections when day changes to avoid cross-day selection errors
-                document.querySelectorAll('input[name="topic"]').forEach(cb => cb.checked = false);
-                
-                wrapper.style.display = 'block';
-                setTimeout(() => wrapper.style.opacity = '1', 10);
-                document.querySelectorAll('.day-content').forEach(div => div.style.display = 'none');
-                document.getElementById(daySelect.value + 'Content').style.display = 'block';
-            } else {
-                wrapper.style.opacity = '0';
-                setTimeout(() => wrapper.style.display = 'none', 400);
-            }
-        }
-        dateSelect.addEventListener('change', toggleSessions);
-        daySelect.addEventListener('change', toggleSessions);
-
-        // --- 1 PER AM/PM LOGIC ---
-        document.querySelectorAll('input[name="topic"]').forEach(checkbox => {
+        // --- SMART SELECTION LOGIC ---
+        const allCheckboxes = document.querySelectorAll('input[name="topic"]');
+        allCheckboxes.forEach(checkbox => {
             checkbox.addEventListener('change', function() {
                 if (this.checked) {
-                    const isAM = this.value.includes("-AM-");
-                    const timeGroup = isAM ? "-AM-" : "-PM-";
-                    const currentDayId = daySelect.value + 'Content';
+                    const val = this.value; // e.g., "D1-AM-ICT-Essentials"
+                    const day = val.split('-')[0]; // "D1"
+                    const time = val.split('-')[1]; // "AM"
                     
-                    // Uncheck others in the same time group (AM or PM) for the selected day
-                    const siblings = document.querySelectorAll(`#${currentDayId} input[name="topic"]`);
-                    siblings.forEach(sibling => {
-                        if (sibling !== this && sibling.value.includes(timeGroup)) {
-                            sibling.checked = false;
+                    // Uncheck others in the same Day/Time slot
+                    allCheckboxes.forEach(other => {
+                        if (other !== this && other.value.startsWith(`${day}-${time}-`)) {
+                            other.checked = false;
+                            other.parentElement.classList.remove('selected');
                         }
                     });
+                    this.parentElement.classList.add('selected');
+                } else {
+                    this.parentElement.classList.remove('selected');
                 }
             });
         });
 
-        // --- SUBMIT ---
+        // --- SUBMIT HANDLER ---
         document.getElementById('regForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            if (!document.getElementById('nameCheckHidden').checked) { alert("Please confirm your name spelling first."); return; }
+            
+            if (!document.getElementById('nameCheckHidden').checked) { 
+                alert("Please confirm your name spelling first."); 
+                return; 
+            }
 
-            const selectedCheckboxes = Array.from(document.querySelectorAll('input[name="topic"]:checked'));
-            if (selectedCheckboxes.length === 0) { alert("Please select at least one training session."); return; }
-
-            const topicFullNames = selectedCheckboxes.map(cb => cb.parentElement.innerText.trim());
-            const topicCodes = selectedCheckboxes.map(cb => cb.value);
+            const selected = Array.from(document.querySelectorAll('input[name="topic"]:checked'));
+            if (selected.length === 0) { 
+                alert("Please select at least one training session."); 
+                return; 
+            }
 
             const overlay = document.getElementById('loadingOverlay');
-            document.getElementById('submitBtn').disabled = true;
+            const submitBtn = document.getElementById('submitBtn');
+            
+            submitBtn.disabled = true;
             overlay.style.display = 'flex';
             
             try {
                 const formData = new FormData(e.target);
                 const dataObj = {};
-                formData.forEach((value, key) => { if (key !== 'topic') dataObj[key] = value; });
+                
+                formData.forEach((value, key) => { 
+                    if (key !== 'topic') dataObj[key] = value; 
+                });
 
                 const fname = dataObj.firstname.trim();
                 const lname = dataObj.lastname.trim();
                 const suffix = (dataObj.suffix && dataObj.suffix !== "None") ? " " + dataObj.suffix : "";
                 dataObj['fullname'] = `${fname} ${lname}${suffix}`.replace(/\s+/g, ' ').toUpperCase();
 
-                dataObj['workshop'] = topicFullNames.join(" | ");
+                const topicNames = selected.map(cb => cb.parentElement.innerText.trim());
+                const topicCodes = selected.map(cb => cb.value);
+                
+                dataObj['workshop'] = topicNames.join(" | ");
                 dataObj['topic'] = topicCodes.join(", ");
                 
-                const response = await fetch(scriptURL, { method: 'POST', body: new URLSearchParams(dataObj) });
+                const response = await fetch(scriptURL, { 
+                    method: 'POST', 
+                    body: new URLSearchParams(dataObj) 
+                });
+                
                 const result = await response.text();
 
                 if (result === "Success") {
-                    document.getElementById('statusTitle').innerText = "Success!";
-                    document.getElementById('statusMsg').innerText = "Registration complete.";
+                    document.getElementById('statusTitle').innerText = "Registration Successful!";
+                    document.getElementById('statusMsg').innerText = `Registered for ${selected.length} sessions.`;
                 } else if (result === "DUPLICATE_EMAIL") {
-                    document.getElementById('statusTitle').innerText = "Notice";
-                    document.getElementById('statusMsg').innerText = "Email already registered.";
-                    document.getElementById('submitBtn').disabled = false;
+                    document.getElementById('statusTitle').innerText = "Already Registered";
+                    document.getElementById('statusMsg').innerText = "Email already in system.";
+                    submitBtn.disabled = false;
                 } else { throw new Error(result); }
             } catch (err) {
-                document.getElementById('statusTitle').innerText = "Error";
-                document.getElementById('statusMsg').innerText = "Submission failed.";
-                document.getElementById('submitBtn').disabled = false;
-            } finally { document.getElementById('closeBtn').style.display = 'block'; }
+                document.getElementById('statusTitle').innerText = "Submission Error";
+                document.getElementById('statusMsg').innerText = "Please try again.";
+                submitBtn.disabled = false;
+            } finally { 
+                document.getElementById('closeBtn').style.display = 'block'; 
+            }
         });
     </script>
 </body>
