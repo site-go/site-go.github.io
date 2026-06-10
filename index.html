@@ -276,29 +276,68 @@
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxjOzsDoroixpG3xZi-RLMWiFJTQxR2IH2O5Mcslk4VkAIgAMAdaBshjfLwSHPochho/exec';
 
-        // --- COUNTDOWN LOGIC ---
-        const startTime = new Date("2026-03-30T12:00:00+08:00").getTime();
-        function updateCountdown() {
-            const distance = startTime - new Date().getTime();
-            const btn = document.getElementById('submitBtn');
-            const form = document.getElementById('regForm');
-            
-            if (distance < 0) {
-                form.classList.remove('form-locked');
-                btn.disabled = false;
-                btn.innerText = "Submit Registration";
-                document.getElementById('countdown').innerHTML = "REGISTRATION IS NOW OPEN";
-                document.getElementById('countdown').style.color = "#059669";
-                document.getElementById('lockMsg').style.display = "none";
-                return;
-            }
-            const d = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const s = Math.floor((distance % (1000 * 60)) / 1000);
-            document.getElementById('countdown').innerHTML = `${d}d ${h}h ${m}m ${s}s`;
+        // --- COUNTDOWN & SCHEDULE LOGIC ---
+const startTime = new Date("2026-03-30T12:00:00+08:00").getTime();
+const endTime = new Date("2026-05-20T00:00:00+08:00").getTime(); // <-- Set your close date here
+
+function updateCountdown() {
+    const now = new Date().getTime();
+    const btn = document.getElementById('submitBtn');
+    const form = document.getElementById('regForm');
+    const countdownEl = document.getElementById('countdown');
+    const lockMsgEl = document.getElementById('lockMsg');
+    
+    // STATE 1: Registration Has Closed
+    if (now >= endTime) {
+        form.classList.add('form-locked');
+        btn.disabled = true;
+        btn.innerText = "Registration Closed";
+        
+        countdownEl.innerHTML = "REGISTRATION IS NOW CLOSED";
+        countdownEl.style.color = "#dc2626"; // Red text
+        if (lockMsgEl) {
+            lockMsgEl.style.display = "block";
+            lockMsgEl.innerText = "The deadline for registration has passed.";
         }
-        setInterval(updateCountdown, 1000); updateCountdown();
+        return;
+    }
+    
+    // STATE 2: Registration Is Open (Counting down to closing time)
+    if (now >= startTime && now < endTime) {
+        form.classList.remove('form-locked');
+        btn.disabled = false;
+        btn.innerText = "Submit Registration";
+        if (lockMsgEl) lockMsgEl.style.display = "none";
+
+        // Calculate time remaining until closing
+        const distanceToClose = endTime - now;
+        const d = Math.floor(distanceToClose / (1000 * 60 * 60 * 24));
+        const h = Math.floor((distanceToClose % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const m = Math.floor((distanceToClose % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((distanceToClose % (1000 * 60)) / 1000);
+
+        countdownEl.innerHTML = `CLOSING IN: ${d}d ${h}h ${m}m ${s}s`;
+        countdownEl.style.color = "#059669"; // Green text
+        return;
+    }
+    
+    // STATE 3: Registration Is Not Open Yet (Counting down to start time)
+    if (now < startTime) {
+        form.classList.add('form-locked');
+        btn.disabled = true;
+        btn.innerText = "Registration Locked";
+        if (lockMsgEl) lockMsgEl.style.display = "block";
+
+        const distanceToOpen = startTime - now;
+        const d = Math.floor(distanceToOpen / (1000 * 60 * 60 * 24));
+        const h = Math.floor((distanceToOpen % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const m = Math.floor((distanceToOpen % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((distanceToOpen % (1000 * 60)) / 1000);
+
+        countdownEl.innerHTML = `OPENS IN: ${d}d ${h}h ${m}m ${s}s`;
+        countdownEl.style.color = "#3b82f6"; // Blue text
+    }
+}
 
         // --- NAME CONFIRMATION ---
         const nameConfirmBtn = document.getElementById('nameConfirmBtn');
